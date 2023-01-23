@@ -27,7 +27,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    private ?string $password = null;
+    private ?string $motPasse = null;
 
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
@@ -114,12 +114,12 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getPassword(): string
     {
-        return $this->password;
+        return $this->motPasse;
     }
 
     public function setPassword(string $password): self
     {
-        $this->password = $password;
+        $this->motPasse = $password;
 
         return $this;
     }
