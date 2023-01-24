@@ -25,113 +25,6 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // $villes = [];
-        // $campus = [];
-        // $etats = [];
-        // $lieux = [];
-        // $participants = [];
-
-        // $faker = Factory::create('fr_FR');
-
-        // $states = ['Créée', 'Ouverte', 'Clôturée', 'Actvité en cours', 'Passée', 'Annulée'];
-
-        // foreach ($states as $state) {
-        //     $etat = new Etat();
-        //     $etat->setLibelle($state);
-
-        //     $etats[] = $etat;
-
-        //     $manager->persist($etat);
-        // }
-
-        // $alouest = ['Rennes', 'Nantes', 'Niort'];
-
-        // foreach ($alouest as $city) {
-        //     $ecole = new Campus();
-        //     $ecole->setNom($city);
-
-        //     $campus[] = $ecole;
-
-        //     $manager->persist($ecole);
-        // }
-
-        // for ($i = 0; $i < 20; $i++) {
-        //     $ville = new Ville();
-        //     $ville->setNom($faker->city());
-        //     $ville->setCodePostal($faker->countryCode());
-        //     $villes[] = $ville;
-
-        //     $manager->persist($ville);
-        // }
-
-        // for ($i = 0; $i < 50; $i++) {
-        //     $lieu = new Lieu();
-        //     $lieu->setNom($faker->sentence(3));
-        //     $lieu->setRue($faker->address());
-        //     $lieu->setVille($villes[array_rand($villes)]);
-        //     $coordinates = $faker->localCoordinates();
-        //     $lieu->setLatitude($coordinates['latitude']);
-        //     $lieu->setLongitude($coordinates['longitude']);
-
-        //     $lieux[] = $lieu;
-
-        //     $manager->persist($lieu);
-        // }
-
-        // for ($i = 0; $i < 100; $i++) {
-        //     $slugger = new AsciiSlugger();
-
-        //     $participant = new Participant();
-        //     $participant->setNom($faker->lastName());
-        //     $prenom = $faker->firstName();
-        //     $participant->setPrenom($prenom);
-        //     $participant->setPseudo($slugger->slug($prenom));
-        //     $participant->setMail($faker->email());
-        //     $participant->setTelephone($faker->phoneNumber());
-        //     $participant->setPassword($this->hasher->hashPassword($participant, 'dev'));
-        //     if ($i === 0) {
-        //         $participant->setAdministrateur(true);
-        //     } else {
-        //         $participant->setAdministrateur(false);
-        //     }
-        //     $participant->setActif(true);
-        //     $participant->setCampus($campus[array_rand($campus)]);
-
-        //     $participants[] = $participant;
-
-        //     $manager->persist($participant);
-        // }
-
-        // for ($i = 0; $i < 50; $i++) {
-        //     $sortie = new Sortie();
-        //     $sortie->setNom($faker->sentence());
-        //     $futureDatetime = $faker->creditCardExpirationDate();
-        //     $sortie->setDateHeureDebut($futureDatetime);
-        //     $sortie->setDateLimiteInscription($futureDatetime->modify('-30 day'));
-        //     $sortie->setDuree(rand(20, 240));
-        //     $sortie->setEtat($etats[array_rand($etats)]);
-        //     $sortie->setInfosSortie($faker->paragraphs(3, true));
-        //     $sortie->setLieu($lieux[array_rand($lieux)]);
-
-        //     /** @var Participant */
-        //     $organisateur = $participants[array_rand($participants)];
-        //     $sortie->setOrganisateur($organisateur);
-        //     $sortie->setCampus($organisateur->getCampus());
-
-        //     $nbParticipants = rand(1, 20);
-        //     $sortie->setNbInscriptionsMax($nbParticipants);
-        //     $placesLibres = $nbParticipants - rand(1, $nbParticipants);
-        //     for ($i = 0; $i < $nbParticipants - $placesLibres; $i++) {
-        //         $sortie->addParticipant($participants[array_rand($participants)]);
-        //     }
-
-        //     var_dump($sortie);
-
-        //     $manager->persist($sortie);
-        // }
-
-        // $manager->flush();
-
         $faker = Factory::create('fr_FR');
         $slugger = new AsciiSlugger();
 
@@ -141,7 +34,7 @@ class AppFixtures extends Fixture
         $lieux = [];
         $participants = [];
 
-        $states = ['Créée', 'Ouverte', 'Clôturée', 'Actvité en cours', 'Passée', 'Annulée'];
+        $states = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'Passée', 'Annulée'];
 
         foreach ($states as $state) {
             $etat = new Etat();
@@ -191,7 +84,7 @@ class AppFixtures extends Fixture
             $manager->persist($participant);
         }
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $lieu = new Lieu();
             $lieu->setNom($faker->sentence(3));
             $lieu->setRue($faker->streetAddress());
@@ -203,9 +96,10 @@ class AppFixtures extends Fixture
             $lieux[] = $lieu;
 
             $manager->persist($lieu);
+        }
 
 
-
+        for ($i = 0; $i < 25; $i++) {
             $sortie = new Sortie();
             $sortie->setNom($faker->sentence(3));
             $futureDate = $faker->creditCardExpirationDate();
@@ -225,7 +119,7 @@ class AppFixtures extends Fixture
             $sortie->setOrganisateur($organisateur);
             $sortie->setCampus($organisateur->getCampus());
 
-            for ($i = 0; $i < $places; $i++) {
+            for ($j = 0; $j < $places; $j++) {
                 $sortie->addParticipant($participants[array_rand($participants)]);
             }
 
