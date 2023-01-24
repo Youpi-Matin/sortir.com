@@ -15,7 +15,7 @@ class ParticipantType extends AbstractType
     {
         $builder
 			->add('pseudo')
-			->add('prenom', TextType::class, [ 'label' => 'Prénom', 'attr' => ['placeholder' => 'Name *']])
+			->add('prenom')
 			->add('nom')
 			->add('telephone')
             ->add('mail', EmailType::class, [ 'label' => 'Email'])
