@@ -73,7 +73,7 @@ class AppFixtures extends Fixture
             $participant->setNom($faker->lastName());
             $prenom = $faker->firstName();
             $participant->setPrenom($prenom);
-            $participant->setPseudo($slugger->slug($prenom));
+            $participant->setPseudo($slugger->slug($prenom)->lower() . uniqid());
             $participant->setPassword($this->hasher->hashPassword($participant, 'dev'));
             $participant->setMail($faker->email());
             $participant->setTelephone($faker->phoneNumber());

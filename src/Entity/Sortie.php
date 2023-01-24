@@ -6,6 +6,7 @@ use App\Repository\SortieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
@@ -104,10 +105,16 @@ class Sortie
         return $this->dateLimiteInscription;
     }
 
+    /**
+     * @throws ORMException
+     */
     public function setDateLimiteInscription(\DateTimeInterface $dateLimiteInscription): self
     {
-        $this->dateLimiteInscription = $dateLimiteInscription;
-
+        if ($dateLimiteInscription > $this->getDateHeureDebut()) {
+            throw new ORMException("L'heure de limite d'inscription ne peut etre supérieure à la date de début ");
+        } else {
+            $this->dateLimiteInscription = $dateLimiteInscription;
+        }
         return $this;
     }
 
