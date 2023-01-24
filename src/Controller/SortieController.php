@@ -17,12 +17,10 @@ class SortieController extends AbstractController
     #[Route('/', name: 'sortie_index')]
     public function index(
         Request $request,
-        ParticipantRepository $participantRepository,
         SortieRepository $sortieRepository
     ): Response {
         /** @var Participant */
-        // $user = $this->getUser();
-        $user = $participantRepository->findOneBy(['id' => 1]);
+        $user = $this->getUser();
 
         $filtre = (new SortieFiltre())
             ->setCampus($user->getCampus())
