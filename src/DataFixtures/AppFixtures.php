@@ -102,9 +102,9 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 25; $i++) {
             $sortie = new Sortie();
             $sortie->setNom($faker->sentence(3));
-            $futureDate = $faker->creditCardExpirationDate();
+            $futureDate = $faker->dateTimeBetween('-3 months', '+3 months');
             $sortie->setDateHeureDebut($futureDate);
-            $sortie->setDateLimiteInscription($futureDate->modify('-30 days'));
+            $sortie->setDateLimiteInscription($futureDate->modify('-10 days'));
             $sortie->setDuree(rand(20, 240));
 
             $places = rand(5, 40);
