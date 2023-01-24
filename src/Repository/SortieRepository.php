@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Participant;
 use App\Entity\Sortie;
+use App\Entity\SortieFiltre;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +39,55 @@ class SortieRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    /**
+     * @return Sortie[] Returns an array of Sortie objects
+     */
+    public function findByFiltre(SortieFiltre $filtre, Participant $participant): array
+    {
+        $qb = $this->createQueryBuilder('s')
+                    ->andWhere('s.campus = :campus')
+                    ->setParameter('campus', $filtre->getCampus())
+        ;
+
+        if ($filtre->getSearch() !== '') {
+            $qb->andWhere('s.nom LIKE :search')
+                ->setParameter('search', "%{$filtre->getSearch()}%")
+            ;
+        }
+
+        if ($filtre->getDateMin()) {
+            $qb->andWhere('s.dateHeureDebut >= :dateMin')
+                ->setParameter('dateMin', $filtre->getDateMin())
+            ;
+        }
+
+        if ($filtre->getDateMax()) {
+            $qb->andWhere('s.dateHeureDebut <= :dateMax')
+                ->setParameter('dateMax', $filtre->getDateMax())
+            ;
+        }
+
+        if ($filtre->isOrganisateurice()) {
+            $qb->andWhere('s.organisateur = :organisateur')
+                ->setParameter('organisateur', $participant)
+            ;
+        }
+
+        if ($filtre->isInscrite()) {
+            $qb->andWhere(':inscrite MEMBER OF s.participants')
+                ->setParameter('inscrite', $participant)
+            ;
+        }
+
+        if ($filtre->isNoninscrite()) {
+            $qb->andWhere(':inscrite NOT MEMBER OF s.participants')
+                ->setParameter('inscrite', $participant)
+            ;
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
 //    /**

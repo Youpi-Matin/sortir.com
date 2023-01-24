@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {{ form_start(form) }}
+  {{ form_widget(form) }}
+
+  <button type="submit">Rechercher</button>
+  {{ form_end(form) }}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Titre</th>
+        <th>Date</th>
+        <th>Clôture</th>
+        <th>Inscriptions</th>
+        <th>État</th>
+        <th>Inscrit</th>
+        <th>Organisateur</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sortie in sorties %}
+        <tr>
+          <td>{{ sortie.nom }}</td>
+          <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+          <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
+          <td></td>
+          <td>{{ sortie.etat.libelle }}</td>
+          <td>
+            {% if app.user in sortie.participants %}X{% endif %}
+          </td>
+          <td>
+            <a href="">{{ sortie.organisateur.pseudo }}</a>
+          </td>
+          <td></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
