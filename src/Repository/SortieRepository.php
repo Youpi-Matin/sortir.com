@@ -47,6 +47,10 @@ class SortieRepository extends ServiceEntityRepository
     public function findByFiltre(SortieFiltre $filtre, Participant $participant): array
     {
         $qb = $this->createQueryBuilder('s')
+                    ->join('s.participants', 'p')
+                    ->addSelect('p')
+                    ->join('s.etat', 'e')
+                    ->addSelect('e')
                     ->andWhere('s.campus = :campus')
                     ->setParameter('campus', $filtre->getCampus())
         ;
