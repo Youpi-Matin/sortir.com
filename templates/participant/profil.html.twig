@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% set title = "Mon profil" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block body %}
+
+	<h1>{{title}}</h1>
+	<img src="" alt="" height="200" width="200">
+	{{ form_start(formulaireParticipant) }}
+		{{ form_widget(formulaireParticipant) }}
+		<input type="submit" value="Enregistrer"/>
+		<a href="">Annuler</a>
+	{{ form_end(formulaireParticipant) }}
+
+{% endblock %}
