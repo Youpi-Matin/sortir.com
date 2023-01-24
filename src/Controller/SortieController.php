@@ -31,7 +31,20 @@ class SortieController extends AbstractController
         $formFiltre = $this->createForm(SortieFiltreType::class, $filtre);
         $formFiltre->handleRequest($request);
 
-        if ($formFiltre->isSubmitted() && $formFiltre->isValid()) {
+        if ($formFiltre->isSubmitted() && !$formFiltre->isValid()) {
+            // En cas d'erreurs, on renvoie toujours des résultats ?
+            // On récupère les champs problématiques et on les valorise à null
+            // sauf le campus que l'on revalorise avec celui de l'utilisateur
+            $errors = $formFiltre->getErrors(true);
+            foreach ($errors as $error) {
+                $param = $error->getOrigin()->getPropertyPath()->getElement(0);
+                if ($param !== 'campus') {
+                    $methode = 'set' . ucfirst($param);
+                    $filtre->$methode(null);
+                } else {
+                    $filtre->setCampus($user->getCampus());
+                }
+            }
         }
 
         $sorties = $sortieRepository->findByFiltre($filtre, $user);
