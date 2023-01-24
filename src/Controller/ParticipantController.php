@@ -32,10 +32,10 @@ class ParticipantController extends AbstractController
         ]);
     }
 
-	#[Route('/profil/{id}', name: 'participant')]
-    public function profil(Participant $participant): Response
+	#[Route('/profil/{id}', name: 'participant_view')]
+    public function view(Participant $participant): Response
     {
-		return $this->render('participant/profil.html.twig', [
+		return $this->render('participant/view.html.twig', [
 			'participant' => $participant
         ]);
     }
