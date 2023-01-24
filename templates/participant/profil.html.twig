@@ -5,12 +5,35 @@
 
 {% block body %}
 
-	<h1>{{title}}</h1>
+	<h1>{{participant.pseudo}}</h1>
+
 	<img src="" alt="" height="200" width="200">
-	{{ form_start(formulaireParticipant) }}
-		{{ form_widget(formulaireParticipant) }}
-		<input type="submit" value="Enregistrer"/>
-		<a href="">Annuler</a>
-	{{ form_end(formulaireParticipant) }}
+
+	<p>
+		<span>Prénom :</span>
+		<span>{{participant.prenom}}</span>
+	</p>
+
+	<p>
+		<span>Nom :</span>
+		<span>{{participant.nom}}</span>
+	</p>
+
+	<p>
+		<span>Téléphone :</span>
+		<span>{{participant.telephone}}</span>
+	</p>
+
+	<p>
+		<span>Email :</span>
+		<span>{{participant.mail}}</span>
+	</p>
+
+	<p>
+		<span>Campus :</span>
+		<span>{{participant.campus}}</span>
+	</p>
+
+	<a href="">Retour</a>
 
 {% endblock %}

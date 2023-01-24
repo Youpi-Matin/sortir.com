@@ -11,13 +11,21 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ParticipantController extends AbstractController
 {
-    #[Route('/profil/{id}', name: 'participant_edit')]
+    #[Route('/profil/edit/{id}', name: 'participant_edit')]
     public function edit(Participant $participant): Response
     {
 		$formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
 
-        return $this->render('participant/profil.html.twig', [
+        return $this->render('participant/edit.html.twig', [
 			'formulaireParticipant' => $formulaireParticipant->createView()
+        ]);
+    }
+
+	#[Route('/profil/{id}', name: 'participant')]
+    public function profil(Participant $participant): Response
+    {
+		return $this->render('participant/profil.html.twig', [
+			'participant' => $participant
         ]);
     }
 }
