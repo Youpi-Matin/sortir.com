@@ -8,7 +8,6 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\Participant
-                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -16,6 +15,27 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login:
+                # "app_login" is the name of the route created previously
+                login_path: app_login
+                check_path: app_login
+                # Activation protection CSRF
+                enable_csrf: true
+                #
+                always_use_default_target_path: true
+                default_target_path: app_main
+
+            remember_me:
+                secret: '%kernel.secret%' # required
+                lifetime: 604800 # 1 semaine en seconde
+                # Si stockage remeberme en base
+                #token_provider:
+                #    doctrine: true
+
+            logout:
+                path: app_logout
+                invalidate_session: true
+                target: app_main
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -23,9 +43,17 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+        # Si pas authentifié alors login only
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_ADMIN}
+        - { path: ^/, roles: ROLE_USER}
+
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
