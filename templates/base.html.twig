@@ -32,6 +32,12 @@
             </nav>
         </header>
 
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert-{{ label }}">{{ message }}</div>
+			{% endfor %}
+		{% endfor %}
+
         <main class="grow">
             {% block body %}{% endblock %}
         </main>

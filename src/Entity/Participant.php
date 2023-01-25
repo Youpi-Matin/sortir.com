@@ -8,8 +8,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
+#[UniqueEntity('mail', message: 'Cet email est déjà utilisé.')]
+#[UniqueEntity('pseudo', message: 'Ce pseudo est déjà utilisé.')]
 class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,24 +22,54 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+	#[Assert\Email]
     private ?string $mail = null;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+	#[Assert\NotBlank]
     private ?string $motPasse = null;
 
     #[ORM\Column(length: 255)]
+	#[Assert\NotBlank]
+	#[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Votre nom doit comporter au moins {{ limit }} caractères',
+        maxMessage: 'Votre nom ne peut pas comporter plus de {{ limit }} caractères',
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+	#[Assert\NotBlank]
+	#[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Votre prénom doit comporter au moins {{ limit }} caractères',
+        maxMessage: 'Votre prénom ne peut pas comporter plus de {{ limit }} caractères',
+    )]
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, unique: true)]
+	#[Assert\NotBlank]
+	#[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Votre pseudo doit comporter au moins {{ limit }} caractères',
+        maxMessage: 'Votre pseudo ne peut pas comporter plus de {{ limit }} caractères',
+    )]
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 20)]
+	#[Assert\NotBlank]
+	#[Assert\Length(
+        min: 2,
+        max: 20,
+        minMessage: 'Votre téléphone doit comporter au moins {{ limit }} caractères',
+        maxMessage: 'Votre téléphone ne peut pas comporter plus de {{ limit }} caractères',
+    )]
     private ?string $telephone = null;
 
     #[ORM\Column]
@@ -46,6 +80,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
+	#[Assert\NotBlank]
     private ?Campus $campus = null;
 
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
