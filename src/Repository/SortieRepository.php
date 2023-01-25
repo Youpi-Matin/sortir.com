@@ -55,7 +55,7 @@ class SortieRepository extends ServiceEntityRepository
                     ->addSelect('e')
                     ->andWhere('s.campus = :campus')
                     ->setParameter('campus', $filtre->getCampus())
-                    ->andWhere('s.etat != "Archivée"')
+                    ->andWhere('s.etat != \'Archivée\'')
         ;
 
         if ($filtre->getSearch() !== '') {
