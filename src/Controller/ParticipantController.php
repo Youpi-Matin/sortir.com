@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ParticipantController extends AbstractController
 {
     #[Route('/profil/edit/{id}', name: 'participant_edit')]
-    public function edit(Participant $participant, Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(Participant $participant, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hashedPassword): Response
     {
 		$formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
 		
@@ -22,6 +22,13 @@ class ParticipantController extends AbstractController
 
 		if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid())
 		{
+			$hashedPassword = $passwordHasher->hashPassword(
+				$participant,
+				$participant->getPassword()
+			);
+			$participant->setPassword($hashedPassword);
+			
+
 			$entityManager->persist($participant);
 			$entityManager->flush();
 

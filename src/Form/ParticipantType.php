@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\FormInterface;
 
 class ParticipantType extends AbstractType
 {
@@ -25,6 +26,12 @@ class ParticipantType extends AbstractType
 				'invalid_message' => 'Les mots de passe ne correspondent pas.',
 				'first_options'  => ['label' => 'Mot de passe'],
     			'second_options' => ['label' => 'Confirmation'],
+				'getter' => function (Participant $participant, FormInterface $form): string {
+                    return $participant->getPassword();
+                },
+                'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
+                    $participant->setPassword($password);
+                },
 			])
 			->add('campus')
 			//->add('motPasse')

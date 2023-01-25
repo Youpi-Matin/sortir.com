@@ -12,9 +12,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: ParticipantRepository::class)]
-#[UniqueEntity('mail', message: 'Cet email est déjà utilisé.',)]
+#[UniqueEntity('mail', message: 'Cet email est déjà utilisé.')]
 #[UniqueEntity('pseudo', message: 'Ce pseudo est déjà utilisé.')]
-class Participant implements UserInterface
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -133,12 +133,12 @@ class Participant implements UserInterface
     /**
      * @see PasswordAuthenticatedUserInterface
      */
-    public function getMotPasse(): string
+    public function getPassword(): string
     {
         return $this->motPasse;
     }
 
-    public function setMotPasse(string $password): self
+    public function setPassword(string $password): self
     {
         $this->motPasse = $password;
 
