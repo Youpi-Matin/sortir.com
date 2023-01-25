@@ -25,7 +25,7 @@ class Sortie
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Assert\DateTime]
+    #[Assert\Type(\DateTimeInterface::class)]
     #[Assert\NotBlank]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
@@ -41,9 +41,16 @@ class Sortie
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\NotBlank]
+    #[Assert\LessThanOrEqual(propertyPath: 'dateHeureDebut')]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Positive(
+        message: 'La valeur doit etre positive',
+    )]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -51,10 +58,13 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Type(Etat::class)]
     private ?Etat $etat = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Type(Participant::class)]
     private ?Participant $organisateur = null;
 
     #[ORM\ManyToMany(targetEntity: Participant::class, mappedBy: 'inscriptions')]
@@ -62,10 +72,14 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Type(Campus::class)]
     private ?Campus $campus = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Valid]
+    #[Assert\Type(Lieu::class)]
     private ?Lieu $lieu = null;
 
     public function __construct()
@@ -86,18 +100,6 @@ class Sortie
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getDateHeureDebut(): ?\DateTimeInterface
-    {
-        return $this->dateHeureDebut;
-    }
-
-    public function setDateHeureDebut(\DateTimeInterface $dateHeureDebut): self
-    {
-        $this->dateHeureDebut = $dateHeureDebut;
 
         return $this;
     }
@@ -124,11 +126,19 @@ class Sortie
      */
     public function setDateLimiteInscription(\DateTimeInterface $dateLimiteInscription): self
     {
-        if ($dateLimiteInscription > $this->getDateHeureDebut()) {
-            throw new ORMException("L'heure de limite d'inscription ne peut etre supérieure à la date de début ");
-        } else {
-            $this->dateLimiteInscription = $dateLimiteInscription;
-        }
+        $this->dateLimiteInscription = $dateLimiteInscription;
+        return $this;
+    }
+
+    public function getDateHeureDebut(): ?\DateTimeInterface
+    {
+        return $this->dateHeureDebut;
+    }
+
+    public function setDateHeureDebut(\DateTimeInterface $dateHeureDebut): self
+    {
+        $this->dateHeureDebut = $dateHeureDebut;
+
         return $this;
     }
 

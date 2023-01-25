@@ -2,14 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Model\SortieFiltre;
 use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
-use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,7 +55,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $manager, ParticipantRepository $participantRepository): Response
+    public function create(Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -69,12 +69,21 @@ class SortieController extends AbstractController
         $sortie->setCampus($user->getCampus());
         $sortie->setDateHeureDebut(new \DateTime('tomorrow'));
         $sortie->setDateLimiteInscription(new \DateTime('now'));
+        $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Créée']));
 
         $form = $this->createForm(SortieCreationType::class, $sortie);
 
+        $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $manager->persist($form);
+            $lieu = $sortie->getLieu();
+            $ville = $lieu->getVille();
+            $manager = $doctrine->getManager();
+            $manager->persist($ville);
+            $manager->persist($lieu);
+            $manager->persist($sortie);
             $manager->flush();
+
             return $this->redirectToRoute('sortie_index');
         }
 

@@ -53,6 +53,7 @@ class SortieCreationType extends AbstractType
                 'label' => 'Date limite d\'inscription',
                 'required' => true,
                 'widget' => 'single_text',
+
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places:',
@@ -61,10 +62,6 @@ class SortieCreationType extends AbstractType
                 'label' => 'Description et Infos:',
                 'required' => false,
             ])
-            /* TODO: Ajouter la gestion du lieu
-            ->add('lieu', EntityType::class, [
-                'class'=> Lieu::class,
-
-            ])*/;
+            ->add('lieu', LieuType::class);
     }
 }
