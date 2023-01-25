@@ -17,27 +17,34 @@ class ParticipantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('pseudo')
-            ->add('prenom')
-            ->add('nom')
-            ->add('telephone')
+            ->add('pseudo', TextType::class, ['sanitize_html' => true])
+            ->add('prenom', TextType::class, ['sanitize_html' => true])
+            ->add('nom', TextType::class, ['sanitize_html' => true])
+            ->add('telephone', TextType::class, ['sanitize_html' => true])
             ->add('mail', EmailType::class, [ 'label' => 'Email'])
             ->add('motPasse', RepeatedType::class, [
+                'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Confirmation'],
+                'first_options'  => [
+                    'label' => 'Mot de passe',
+                    'hash_property_path' => 'password',
+                    'attr' => ['placeholder' => '•••••••'],
+                ],
+                'second_options' => [
+                    'label' => 'Confirmation',
+                    'attr' => ['placeholder' => '•••••••'],
+                ],
+                'mapped' => false,
+                'required' => false,
+                'sanitize_html' => true,
                 'getter' => function (Participant $participant, FormInterface $form): string {
                     return $participant->getPassword();
                 },
                 'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
-                    $participant->setPassword($password);
+                    $participant->setPassword((string)$password);
                 },
             ])
             ->add('campus')
-            //->add('motPasse')
-            //->add('administrateur')
-            //->add('actif')
-            //->add('inscriptions')
         ;
     }
 
