@@ -1,24 +1,33 @@
 <?php
 
-namespace App\Entity;
+namespace App\Model;
 
+use App\Entity\Campus;
 use DateTime;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SortieFiltre
 {
+    #[Assert\NotNull()]
     private ?Campus $campus = null;
 
     private ?string $search = null;
 
+    #[Assert\LessThan(
+        propertyPath: 'dateMax'
+    )]
     private ?DateTime $dateMin = null;
 
+    #[Assert\GreaterThan(
+        propertyPath: 'dateMin'
+    )]
     private ?DateTime $dateMax = null;
 
-    private ?bool $organisateurice = null;
+    private ?bool $organisateurice = false;
 
-    private ?bool $inscrite = null;
+    private ?bool $inscrite = false;
 
-    private ?bool $noninscrite = null;
+    private ?bool $noninscrite = false;
 
 
 

@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Participant;
 use App\Entity\Sortie;
-use App\Entity\SortieFiltre;
+use App\Model\SortieFiltre;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -47,8 +47,15 @@ class SortieRepository extends ServiceEntityRepository
     public function findByFiltre(SortieFiltre $filtre, Participant $participant): array
     {
         $qb = $this->createQueryBuilder('s')
+                    ->join('s.participants', 'p')
+                    ->addSelect('p')
+                    ->join('s.organisateur', 'o')
+                    ->addSelect('o')
+                    ->join('s.etat', 'e')
+                    ->addSelect('e')
                     ->andWhere('s.campus = :campus')
                     ->setParameter('campus', $filtre->getCampus())
+                    ->andWhere('s.etat != \'Archivée\'')
         ;
 
         if ($filtre->getSearch() !== '') {

@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Participant;
 use App\Entity\Sortie;
-use App\Entity\SortieFiltre;
+use App\Model\SortieFiltre;
 use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
 use App\Repository\ParticipantRepository;
@@ -20,23 +20,30 @@ class SortieController extends AbstractController
     #[Route('/', name: 'sortie_index')]
     public function index(
         Request $request,
-        ParticipantRepository $participantRepository,
         SortieRepository $sortieRepository
     ): Response {
         /** @var Participant */
         $user = $this->getUser();
-        //$user = $participantRepository->findOneBy(['id' => 1]);
-
         $filtre = (new SortieFiltre())
-            ->setCampus($user->getCampus())
-            ->setOrganisateurice(false)
-            ->setInscrite(false)
-            ->setNoninscrite(false);
+            ->setCampus($user->getCampus());
 
         $formFiltre = $this->createForm(SortieFiltreType::class, $filtre);
         $formFiltre->handleRequest($request);
 
-        if ($formFiltre->isSubmitted() && $formFiltre->isValid()) {
+        if ($formFiltre->isSubmitted() && !$formFiltre->isValid()) {
+            // En cas d'erreurs, on renvoie toujours des résultats ?
+            // On récupère les champs problématiques et on les valorise à null
+            // sauf le campus que l'on revalorise avec celui de l'utilisateur
+            $errors = $formFiltre->getErrors(true);
+            foreach ($errors as $error) {
+                $param = $error->getOrigin()->getPropertyPath()->getElement(0);
+                if ($param !== 'campus') {
+                    $methode = 'set' . ucfirst($param);
+                    $filtre->$methode(null);
+                } else {
+                    $filtre->setCampus($user->getCampus());
+                }
+            }
         }
 
         $sorties = $sortieRepository->findByFiltre($filtre, $user);
@@ -48,7 +55,7 @@ class SortieController extends AbstractController
     }
 
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
-    public function create(Request $request, EntityManagerInterface $manager, ParticipantRepository $participantRepository):Response
+    public function create(Request $request, EntityManagerInterface $manager, ParticipantRepository $participantRepository): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -72,7 +79,7 @@ class SortieController extends AbstractController
         }
 
         return $this->render('sortie/create.html.twig', [
-            'form'=> $form,
+            'form' => $form,
         ]);
     }
 }

@@ -14,8 +14,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SortieCreationType extends AbstractType
 {
-
-
     /**
      * Configure la sanitization des input HTML
      * @param OptionsResolver $resolver

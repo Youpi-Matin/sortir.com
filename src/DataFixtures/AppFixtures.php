@@ -34,7 +34,7 @@ class AppFixtures extends Fixture
         $lieux = [];
         $participants = [];
 
-        $states = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'Passée', 'Annulée'];
+        $states = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'Passée', 'Annulée', 'Archivée'];
 
         foreach ($states as $state) {
             $etat = new Etat();
