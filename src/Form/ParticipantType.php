@@ -17,24 +17,24 @@ class ParticipantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-			->add('pseudo')
-			->add('prenom')
-			->add('nom')
-			->add('telephone')
+            ->add('pseudo')
+            ->add('prenom')
+            ->add('nom')
+            ->add('telephone')
             ->add('mail', EmailType::class, [ 'label' => 'Email'])
-			->add('motPasse', RepeatedType::class, [
-				'invalid_message' => 'Les mots de passe ne correspondent pas.',
-				'first_options'  => ['label' => 'Mot de passe'],
-    			'second_options' => ['label' => 'Confirmation'],
-				'getter' => function (Participant $participant, FormInterface $form): string {
+            ->add('motPasse', RepeatedType::class, [
+                'invalid_message' => 'Les mots de passe ne correspondent pas.',
+                'first_options'  => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Confirmation'],
+                'getter' => function (Participant $participant, FormInterface $form): string {
                     return $participant->getPassword();
                 },
                 'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
                     $participant->setPassword($password);
                 },
-			])
-			->add('campus')
-			//->add('motPasse')
+            ])
+            ->add('campus')
+            //->add('motPasse')
             //->add('administrateur')
             //->add('actif')
             //->add('inscriptions')

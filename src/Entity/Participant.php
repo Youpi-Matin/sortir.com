@@ -22,19 +22,19 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-	#[Assert\Email]
+    #[Assert\Email]
     private ?string $mail = null;
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
-	#[Assert\NotBlank]
+    #[Assert\NotBlank]
     private ?string $motPasse = null;
 
     #[ORM\Column(length: 255)]
-	#[Assert\NotBlank]
-	#[Assert\Length(
+    #[Assert\NotBlank]
+    #[Assert\Length(
         min: 2,
         max: 255,
         minMessage: 'Votre nom doit comporter au moins {{ limit }} caractères',
@@ -43,8 +43,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
-	#[Assert\NotBlank]
-	#[Assert\Length(
+    #[Assert\NotBlank]
+    #[Assert\Length(
         min: 2,
         max: 255,
         minMessage: 'Votre prénom doit comporter au moins {{ limit }} caractères',
@@ -53,8 +53,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $prenom = null;
 
     #[ORM\Column(length: 255, unique: true)]
-	#[Assert\NotBlank]
-	#[Assert\Length(
+    #[Assert\NotBlank]
+    #[Assert\Length(
         min: 2,
         max: 255,
         minMessage: 'Votre pseudo doit comporter au moins {{ limit }} caractères',
@@ -63,8 +63,8 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $pseudo = null;
 
     #[ORM\Column(length: 20)]
-	#[Assert\NotBlank]
-	#[Assert\Length(
+    #[Assert\NotBlank]
+    #[Assert\Length(
         min: 2,
         max: 20,
         minMessage: 'Votre téléphone doit comporter au moins {{ limit }} caractères',
@@ -80,7 +80,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\ManyToOne(inversedBy: 'participants')]
     #[ORM\JoinColumn(nullable: false)]
-	#[Assert\NotBlank]
+    #[Assert\NotBlank]
     private ?Campus $campus = null;
 
     #[ORM\OneToMany(mappedBy: 'organisateur', targetEntity: Sortie::class)]
