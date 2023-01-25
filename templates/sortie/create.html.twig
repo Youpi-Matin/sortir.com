@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+  {{ form_start(form) }}
+  <div>Campus: {{ app.user.campus.nom }}</div>
+  {{ form_widget(form) }}
+  <button type="submit">Créer</button>
+  {{ form_end(form) }}
+
+{% endblock %}

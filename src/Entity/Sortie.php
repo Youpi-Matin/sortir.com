@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -18,12 +19,25 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    #[Assert\Length(min: 1, max: 255)]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\DateTime]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La valeur {{value}} n\'est pas du type {{type}}.',
+    )]
+    #[Assert\NotBlank]
+    #[Assert\Positive(
+        message: 'La valeur doit etre positive',
+    )]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
