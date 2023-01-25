@@ -68,7 +68,7 @@ class AppFixtures extends Fixture
             $participant = new Participant();
             $participant->setActif(true);
 
-            $i === 1 ? $participant->setAdministrateur(true) : $participant->setAdministrateur(false);
+            $i === 0 ? $participant->setAdministrateur(true) : $participant->setAdministrateur(false);
 
             $participant->setNom($faker->lastName());
             $prenom = $faker->firstName();
@@ -99,7 +99,7 @@ class AppFixtures extends Fixture
         }
 
 
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $sortie = new Sortie();
             $sortie->setNom($faker->sentence(3));
             $futureDate = $faker->creditCardExpirationDate();
