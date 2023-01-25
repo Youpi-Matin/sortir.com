@@ -3,9 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Participant;
-use App\Entity\SortieFiltre;
 use App\Form\SortieFiltreType;
-use App\Repository\ParticipantRepository;
+use App\Model\SortieFiltre;
 use App\Repository\SortieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,10 +22,7 @@ class SortieController extends AbstractController
         $user = $this->getUser();
 
         $filtre = (new SortieFiltre())
-            ->setCampus($user->getCampus())
-            ->setOrganisateurice(false)
-            ->setInscrite(false)
-            ->setNoninscrite(false);
+            ->setCampus($user->getCampus());
 
         $formFiltre = $this->createForm(SortieFiltreType::class, $filtre);
         $formFiltre->handleRequest($request);
