@@ -47,7 +47,7 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/sortie/creation', name: 'sortie_create', methods: ['GET', 'POST'])]
+    #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, EntityManagerInterface $manager, ParticipantRepository $participantRepository):Response
     {
         // Interdit l'acces si non authentifié
