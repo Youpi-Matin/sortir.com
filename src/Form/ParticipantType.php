@@ -17,10 +17,10 @@ class ParticipantType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('pseudo', TextType::class, ['sanitize_html' => true])
-            ->add('prenom', TextType::class, ['sanitize_html' => true])
-            ->add('nom', TextType::class, ['sanitize_html' => true])
-            ->add('telephone', TextType::class, ['sanitize_html' => true])
+            ->add('pseudo')
+            ->add('prenom')
+            ->add('nom')
+            ->add('telephone')
             ->add('mail', EmailType::class, [ 'label' => 'Email'])
             ->add('motPasse', RepeatedType::class, [
                 'type' => PasswordType::class,
@@ -36,7 +36,6 @@ class ParticipantType extends AbstractType
                 ],
                 'mapped' => false,
                 'required' => false,
-                'sanitize_html' => true,
                 'getter' => function (Participant $participant, FormInterface $form): string {
                     return $participant->getPassword();
                 },
@@ -52,6 +51,7 @@ class ParticipantType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Participant::class,
+            'sanitize_html' => true,
         ]);
     }
 }
