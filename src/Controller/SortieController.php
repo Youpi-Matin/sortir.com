@@ -56,6 +56,32 @@ class SortieController extends AbstractController
         ]);
     }
 
+
+    #[Route('sortie/view/{id}', name: 'sortie_view')]
+    public function view(int $id, ManagerRegistry $doctrine): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupère l'orginisateur de la sortie
+        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si la sortie n'existe pas
+        if (!$sortie) {
+            throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
+
+        return $this->render('sortie/view.html.twig', [
+            'sortie' => $sortie,
+        ]);
+    }
+
+    /** Creation d'une nouvelle sortie
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, ManagerRegistry $doctrine): Response
     {
@@ -72,7 +98,7 @@ class SortieController extends AbstractController
         $sortie->setCampus($user->getCampus());
         $sortie->setDateHeureDebut(new \DateTime('tomorrow'));
         $sortie->setDateLimiteInscription(new \DateTime('now'));
-        //$sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Créée']));
+        $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Créée']));
 
         $form = $this->createForm(SortieCreationType::class, $sortie);
 
@@ -92,11 +118,17 @@ class SortieController extends AbstractController
 
         return $this->render('sortie/create.html.twig', [
             'form' => $form,
-            'etat' => 'Null',
+            'etat' => $sortie->getEtat()->getLibelle(),
             'sortie_id' => $sortie->getId(),
         ]);
     }
 
+    /** Publication d'une sortie
+     * @param int $id
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
     #[Route('sortie/publish/{id}', name: 'sortie_publish')]
     public function publish(int $id, Request $request, ManagerRegistry $doctrine): Response
     {
@@ -127,8 +159,7 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_index');
     }
 
-    /**
-     * Mise à jour d'une sortie
+    /** Mise à jour d'une sortie
      * @param int $id
      * @param Request $request
      * @param ManagerRegistry $doctrine
@@ -142,6 +173,12 @@ class SortieController extends AbstractController
 
         // Récupère l'orginisateur de la sortie
         $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si la sortie n'existe pas
+        if (!$sortie) {
+            throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
+
 
         // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
         if ($sortie->getOrganisateur() !== $this->getUser()) {
@@ -170,8 +207,7 @@ class SortieController extends AbstractController
         ]);
     }
 
-    /**
-     * Annulation d'une sortie
+    /** Annulation d'une sortie
      * Utilise un formaulaire contenant seulement le motif de l'annulation
      * Le motif remplacera les infos de la sortie.
      * @param int $id L'id de la sortie à annuler
@@ -187,6 +223,11 @@ class SortieController extends AbstractController
 
         // Récupère l'orginisateur de la sortie
         $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si la sortie n'existe pas
+        if (!$sortie) {
+            throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
 
         // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
         if ($sortie->getOrganisateur() !== $this->getUser()) {
@@ -216,14 +257,24 @@ class SortieController extends AbstractController
         ]);
     }
 
+    /** Suppression d'une sortie
+     * @param int $id
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
     #[Route('sortie/delete/{id}', name: 'sortie_delete')]
     public function delete(int $id, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Récupère l'orginisateur de la sortie
+        // Récupère la sortie
         $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si la sortie n'existe pas
+        if (!$sortie) {
+            throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
 
         // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
         if ($sortie->getOrganisateur() !== $this->getUser()) {
