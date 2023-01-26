@@ -57,6 +57,11 @@ class SortieController extends AbstractController
     }
 
 
+    /** Affichage d'une sortie
+     * @param int $id
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
     #[Route('sortie/view/{id}', name: 'sortie_view')]
     public function view(int $id, ManagerRegistry $doctrine): Response
     {
@@ -85,7 +90,6 @@ class SortieController extends AbstractController
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, ManagerRegistry $doctrine): Response
     {
-
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         // Récupère l'organisteur
@@ -105,6 +109,9 @@ class SortieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($request->request->get('action_button') === 'publish') {
+                $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouverte']));
+            }
             $lieu = $sortie->getLieu();
             $ville = $lieu->getVille();
             $manager = $doctrine->getManager();
@@ -112,6 +119,8 @@ class SortieController extends AbstractController
             $manager->persist($lieu);
             $manager->persist($sortie);
             $manager->flush();
+
+            $this->addFlash('success', 'Sortie Crée avec succès');
 
             return $this->redirectToRoute('sortie_index');
         }

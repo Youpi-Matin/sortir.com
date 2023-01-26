@@ -7,7 +7,7 @@
     <div>Date et Heure de La sortie: {{ sortie.dateHeureDebut | date("d/m/y H:i") }}</div>
 
     <div>Date Limite d'inscription: {{ sortie.dateLimiteInscription | date("d/m/y") }}</div>
-    <div>Nombre de places: ###</div>
+    <div>Nombre de places: {{ sortie.nbInscriptionsMax }}</div>
     <div>Durée: {{ sortie.duree }} minutes</div>
     <div>Descriptions et infos: <p>{{ sortie.infosSortie }}</p></div>
     <div>Campus: {{ sortie.campus.nom }}</div>
