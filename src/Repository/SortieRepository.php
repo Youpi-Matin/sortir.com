@@ -18,9 +18,14 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SortieRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
+    private EtatRepository $etatRepository;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        EtatRepository $etatRepository
+    ) {
         parent::__construct($registry, Sortie::class);
+        $this->etatRepository = $etatRepository;
     }
 
     public function save(Sortie $entity, bool $flush = false): void
@@ -44,8 +49,14 @@ class SortieRepository extends ServiceEntityRepository
     /**
      * @return Sortie[] Returns an array of Sortie objects
      */
-    public function findByFiltre(SortieFiltre $filtre, Participant $participant): array
-    {
+    public function findByFiltre(
+        SortieFiltre $filtre,
+        Participant $participant
+    ): array {
+
+        $etatPassee = $this->etatRepository->findOneBy(['libelle' => 'Passée']);
+        $etatArchivee = $this->etatRepository->findOneBy(['libelle' => 'Archivée']);
+
         $qb = $this->createQueryBuilder('s')
                     ->join('s.participants', 'p')
                     ->addSelect('p')
@@ -55,7 +66,7 @@ class SortieRepository extends ServiceEntityRepository
                     ->addSelect('e')
                     ->andWhere('s.campus = :campus')
                     ->setParameter('campus', $filtre->getCampus())
-                    ->andWhere('s.etat != \'Archivée\'')
+                    ->andWhere("s.etat != {$etatArchivee->getId()}")
         ;
 
         if ($filtre->getSearch() !== '') {
@@ -92,6 +103,10 @@ class SortieRepository extends ServiceEntityRepository
             $qb->andWhere(':inscrite NOT MEMBER OF s.participants')
                 ->setParameter('inscrite', $participant)
             ;
+        }
+
+        if ($filtre->isPassee()) {
+            $qb->andWhere("s.etat = {$etatPassee->getId()}");
         }
 
         return $qb->getQuery()->getResult();
