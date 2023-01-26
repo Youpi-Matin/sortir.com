@@ -5,10 +5,15 @@
     {{ form_start(form) }}
     <div>Campus: {{ app.user.campus.nom }}</div>
     {{ form_widget(form) }}
-    {% if etat is same as('Créée') %}
+    {% if etat is same as('Créée') or etat is same as('Ouverte') %}
         <button type="submit">Enregistrer</button>
-        <a href="#">Publier La Sortie</a>
-        <a href="{{ path('sortie_cancel', {'id': sortie_id}) }}">Annuler</a>
+        {% if sortie_id %}
+            <a href="{{ path('sortie_publish', {'id': sortie_id}) }}">Publier La Sortie</a>
+            <a href="{{ path('sortie_cancel', {'id': sortie_id}) }}">Annuler</a>
+        {% else %}
+            <a href="#">Publier La Sortie</a>
+            <a href="#">Annuler</a>
+        {% endif %}
     {% endif %}
     {{ form_end(form) }}
 

@@ -89,6 +89,8 @@ class SortieController extends AbstractController
 
         return $this->render('sortie/create.html.twig', [
             'form' => $form,
+            'etat' => $sortie->getEtat()->getLibelle(),
+            'sortie_id' => $sortie->getId(),
         ]);
     }
 
@@ -150,6 +152,31 @@ class SortieController extends AbstractController
         $manager->flush();
 
         $this->addFlash('success', 'Sortie Annulée avec succès');
+
+        return $this->redirectToRoute('sortie_index');
+    }
+
+    #[Route('sortie/publish/{id}', name: 'sortie_publish')]
+    public function publish(int $id, ManagerRegistry $doctrine): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupère l'orginisateur de la sortie
+        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
+        if ($sortie->getOrganisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
+        }
+
+        $sortie = $doctrine->getRepository(Sortie::class)->find($id);
+        $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouverte']));
+        $manager = $doctrine->getManager();
+        $manager->persist($sortie);
+        $manager->flush();
+
+        $this->addFlash('success', 'Sortie Ouverte aux inscriptions avec succès');
 
         return $this->redirectToRoute('sortie_index');
     }
