@@ -14,8 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class ParticipantController extends AbstractController
 {
     #[Route('/profil/edit/{id}', name: 'participant_edit', requirements: ['id' => '\d+'])]
-    public function edit(Participant $participant, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hasher): Response
-    {
+    public function edit(
+        Participant $participant,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $hasher
+    ): Response {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -23,14 +27,16 @@ class ParticipantController extends AbstractController
             throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
         }
 
-        $currentPassword = $this->getUser()->getPassword();
+        $oldPassword = $this->getUser()->getPassword();
 
         $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
 
         $formulaireParticipant->handleRequest($request);
 
         if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid()) {
-            $participant->setPassword($participant->getPassword());
+            if ($participant->getPassword() != $oldPassword) {
+                $participant->setPassword($hasher->hashPassword($participant, $participant->getPassword()));
+            }
 
             $entityManager->persist($participant);
             $entityManager->flush();
