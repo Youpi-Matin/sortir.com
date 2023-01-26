@@ -29,6 +29,8 @@ class SortieFiltre
 
     private ?bool $noninscrite = false;
 
+    private ?bool $passee = false;
+
 
 
     /**
@@ -153,6 +155,24 @@ class SortieFiltre
     public function setNoninscrite(?bool $noninscrite): self
     {
         $this->noninscrite = $noninscrite;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of passee
+     */
+    public function isPassee(): ?bool
+    {
+        return $this->passee;
+    }
+
+    /**
+     * Set the value of passee
+     */
+    public function setPassee(?bool $passee): self
+    {
+        $this->passee = $passee;
 
         return $this;
     }

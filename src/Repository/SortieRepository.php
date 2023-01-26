@@ -44,8 +44,11 @@ class SortieRepository extends ServiceEntityRepository
     /**
      * @return Sortie[] Returns an array of Sortie objects
      */
-    public function findByFiltre(SortieFiltre $filtre, Participant $participant): array
-    {
+    public function findByFiltre(
+        SortieFiltre $filtre,
+        Participant $participant
+    ): array {
+
         $qb = $this->createQueryBuilder('s')
                     ->join('s.participants', 'p')
                     ->addSelect('p')
@@ -55,7 +58,7 @@ class SortieRepository extends ServiceEntityRepository
                     ->addSelect('e')
                     ->andWhere('s.campus = :campus')
                     ->setParameter('campus', $filtre->getCampus())
-                    ->andWhere('s.etat != \'Archivée\'')
+                    ->andWhere('e.libelle != \'Archivée\'')
         ;
 
         if ($filtre->getSearch() !== '') {
@@ -92,6 +95,10 @@ class SortieRepository extends ServiceEntityRepository
             $qb->andWhere(':inscrite NOT MEMBER OF s.participants')
                 ->setParameter('inscrite', $participant)
             ;
+        }
+
+        if ($filtre->isPassee()) {
+            $qb->andWhere('e.libelle = \'Passée\'');
         }
 
         return $qb->getQuery()->getResult();

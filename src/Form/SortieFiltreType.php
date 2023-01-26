@@ -49,6 +49,10 @@ class SortieFiltreType extends AbstractType
                 'label' => 'je n\'y suis pas inscrit·e',
                 'required' => false
             ])
+            ->add('passee', CheckboxType::class, [
+                'label' => 'passée ?',
+                'required' => false
+            ])
         ;
     }
 
