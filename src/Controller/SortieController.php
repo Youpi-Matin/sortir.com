@@ -91,4 +91,66 @@ class SortieController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/sortie/manage/{id}', name: 'sortie_manage', methods: ['GET', 'POST'])]
+    public function manage(int $id, Request $request, ManagerRegistry $doctrine): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupère l'orginisateur de la sortie
+        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
+        if ($sortie->getOrganisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
+        }
+
+        $form = $this->createForm(SortieCreationType::class, $sortie);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $lieu = $sortie->getLieu();
+            $ville = $lieu->getVille();
+            $manager = $doctrine->getManager();
+            $manager->persist($ville);
+            $manager->persist($lieu);
+            $manager->persist($sortie);
+            $manager->flush();
+
+            return $this->redirectToRoute('sortie_index');
+        }
+
+        return $this->render('sortie/create.html.twig', [
+            'form' => $form,
+            'etat' => $sortie->getEtat()->getLibelle(),
+            'sortie_id' => $sortie->getId(),
+        ]);
+    }
+
+    #[Route('sortie/cancel/{id}', name: 'sortie_cancel')]
+    public function cancel(int $id, ManagerRegistry $doctrine): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupère l'orginisateur de la sortie
+        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
+        if ($sortie->getOrganisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
+        }
+
+        $sortie = $doctrine->getRepository(Sortie::class)->find($id);
+        $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Annulée']));
+        $manager = $doctrine->getManager();
+        $manager->persist($sortie);
+        $manager->flush();
+
+        $this->addFlash('success', 'Sortie Annulée avec succès');
+
+        return $this->redirectToRoute('sortie_index');
+    }
 }

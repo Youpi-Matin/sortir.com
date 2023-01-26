@@ -59,6 +59,7 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\Type(Etat::class)]
+    #[Assert\NotBlank]
     private ?Etat $etat = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
@@ -79,6 +80,7 @@ class Sortie
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\Valid]
+    #[Assert\NotBlank]
     #[Assert\Type(Lieu::class)]
     private ?Lieu $lieu = null;
 
