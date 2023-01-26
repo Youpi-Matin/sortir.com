@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+    {% block body %}
+
+        {{ form_start(form) }}
+        <div>Campus: {{ app.user.campus.nom }}</div>
+        {{ form_widget(form) }}
+        <button type="submit">Enregistrer</button>
+        <a href="{{ path('sortie_publish', {id: sortie_id}) }}">Publier la sortie</a>
+        <a href="{{ path('sortie_delete', {id: sortie_id}) }}">Supprimer la sortie</a>
+        <a href="{{ path('sortie_cancel', {id: sortie_id}) }}">Annuler</a>
+        {{ form_end(form) }}
+
+    {% endblock %}
+
+
+

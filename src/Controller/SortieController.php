@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieCancelType;
+use App\Form\SortieUpdateType;
 use App\Model\SortieFiltre;
 use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
@@ -126,8 +127,15 @@ class SortieController extends AbstractController
         return $this->redirectToRoute('sortie_index');
     }
 
-    #[Route('/sortie/manage/{id}', name: 'sortie_manage', methods: ['GET', 'POST'])]
-    public function manage(int $id, Request $request, ManagerRegistry $doctrine): Response
+    /**
+     * Mise à jour d'une sortie
+     * @param int $id
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
+    #[Route('/sortie/update/{id}', name: 'sortie_update', methods: ['GET', 'POST'])]
+    public function update(int $id, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -140,7 +148,7 @@ class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
         }
 
-        $form = $this->createForm(SortieCreationType::class, $sortie);
+        $form = $this->createForm(SortieUpdateType::class, $sortie);
 
         $form->handleRequest($request);
 
@@ -156,9 +164,8 @@ class SortieController extends AbstractController
             return $this->redirectToRoute('sortie_index');
         }
 
-        return $this->render('sortie/create.html.twig', [
+        return $this->render('sortie/update.html.twig', [
             'form' => $form,
-            'etat' => $sortie->getEtat()->getLibelle(),
             'sortie_id' => $sortie->getId(),
         ]);
     }
@@ -207,5 +214,27 @@ class SortieController extends AbstractController
             'form' => $form,
             'sortie' => $sortie,
         ]);
+    }
+
+    #[Route('sortie/delete/{id}', name: 'sortie_delete')]
+    public function delete(int $id, ManagerRegistry $doctrine): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupère l'orginisateur de la sortie
+        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
+        if ($sortie->getOrganisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
+        }
+        $manager = $doctrine->getManager();
+        $manager->remove($sortie);
+        $manager->flush();
+
+        $this->addFlash('success', 'Sortie Supprimée avec succès');
+
+        return $this->redirectToRoute('sortie_index');
     }
 }
