@@ -56,23 +56,38 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/sortie/inscription/{id<\d+>}', name: 'sortie_inscription', methods: ['GET'])]
-    public function inscription(
+    #[Route('/sortie/inscrire/{id<\d+>}', name: 'sortie_inscrire', methods: ['GET'])]
+    public function inscrire(
         Sortie $sortie,
         SortieRepository $sortieRepository,
         Request $request
-    ): Response {
+    ): JsonResponse {
+
+        $body = [];
+
         if ($request->get('action') === 'inscrire') {
             $sortie->addParticipant($this->getUser());
             $sortieRepository->save($sortie, true);
-            return new Response('Inscription réalisée');
+
+            $status = 200;
+            $body['status'] = 'success';
+            $body['message'] = 'Votre inscription a bien été enregistrée.';
+            $body['count'] = count($sortie->getParticipants());
         } elseif ($request->get('action') === 'desinscrire') {
             $sortie->removeParticipant($this->getUser());
             $sortieRepository->save($sortie, true);
-            return new Response('Désinscription réalisée');
+
+            $status = 200;
+            $body['status'] = 'success';
+            $body['message'] = 'Votre désinscription a bien été enregistrée.';
+            $body['count'] = count($sortie->getParticipants());
         } else {
-            return new NotFoundHttpException();
+            $status = 404;
+            $body['status'] = 'error';
+            $body['message'] = 'Cette page n\'existe pas.';
         }
+
+        return new JsonResponse($body, $status, [], false);
     }
 
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]

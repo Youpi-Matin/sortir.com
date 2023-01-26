@@ -22,21 +22,23 @@
     </thead>
     <tbody>
       {% for sortie in sorties %}
-        <tr>
+        {% set action = app.user in sortie.participants ? 'desinscrire' : 'inscrire' %}
+        <tr data-controller="sortie-actions" data-sortie-action="{{ action }}">
           <td>{{ sortie.nom }}</td>
           <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
           <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
-          <td></td>
+          <td>
+            <span id="sortie-action-count">{{ sortie.participants|length }}</span> / {{ sortie.nbInscriptionsMax }}
+          </td>
           <td>{{ sortie.etat.libelle }}</td>
           <td>
-            {% if app.user in sortie.participants %}X{% endif %}
+            <span id="sortie-action-statut"></span>
           </td>
           <td>
             <a href="">{{ sortie.organisateur.pseudo }}</a>
           </td>
           <td>
-            {% set action = app.user in sortie.participants ? 'desinscrire' : 'inscrire' %}
-            <span data-controller="des-inscription" data-sortie-action="{{ action }}"><a href="{{ path('sortie_inscription', { id: sortie.id }) }}">{{ action }}</a></span>
+            <span id="sortie-action-lien"><a href="{{ path('sortie_inscrire', { id: sortie.id }) }}"></a></span>
           </td>
         </tr>
       {% endfor %}
