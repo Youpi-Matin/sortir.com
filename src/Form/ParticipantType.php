@@ -21,27 +21,29 @@ class ParticipantType extends AbstractType
             ->add('prenom')
             ->add('nom')
             ->add('telephone')
-            ->add('mail', EmailType::class, [ 'label' => 'Email'])
+            ->add('mail', EmailType::class, ['label' => 'Email'])
             ->add('motPasse', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les mots de passe ne correspondent pas.',
                 'first_options'  => [
                     'label' => 'Mot de passe',
-                    'hash_property_path' => 'password',
+                    //'hash_property_path' => 'password',
+                    'always_empty' => 'false',
                     'attr' => ['placeholder' => '•••••••'],
                 ],
                 'second_options' => [
                     'label' => 'Confirmation',
                     'attr' => ['placeholder' => '•••••••'],
                 ],
-                'mapped' => false,
-                'required' => false,
                 'getter' => function (Participant $participant, FormInterface $form): string {
                     return $participant->getPassword();
                 },
                 'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
                     $participant->setPassword((string)$password);
                 },
+                //'mapped' => false,
+                'required' => false,
+
             ])
             ->add('campus')
         ;
