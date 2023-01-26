@@ -34,7 +34,10 @@
           <td>
             <a href="">{{ sortie.organisateur.pseudo }}</a>
           </td>
-          <td></td>
+          <td>
+            {% set action = app.user in sortie.participants ? 'desinscrire' : 'inscrire' %}
+            <span data-controller="des-inscription" data-sortie-action="{{ action }}"><a href="{{ path('sortie_inscription', { id: sortie.id }) }}">{{ action }}</a></span>
+          </td>
         </tr>
       {% endfor %}
     </tbody>

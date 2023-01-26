@@ -11,8 +11,10 @@ use App\Form\SortieFiltreType;
 use App\Repository\SortieRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
@@ -52,6 +54,25 @@ class SortieController extends AbstractController
             'form' => $formFiltre,
             'sorties' => $sorties,
         ]);
+    }
+
+    #[Route('/sortie/inscription/{id<\d+>}', name: 'sortie_inscription', methods: ['GET'])]
+    public function inscription(
+        Sortie $sortie,
+        SortieRepository $sortieRepository,
+        Request $request
+    ): Response {
+        if ($request->get('action') === 'inscrire') {
+            $sortie->addParticipant($this->getUser());
+            $sortieRepository->save($sortie, true);
+            return new Response('Inscription réalisée');
+        } elseif ($request->get('action') === 'desinscrire') {
+            $sortie->removeParticipant($this->getUser());
+            $sortieRepository->save($sortie, true);
+            return new Response('Désinscription réalisée');
+        } else {
+            return new NotFoundHttpException();
+        }
     }
 
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
