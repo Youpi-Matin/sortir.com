@@ -18,14 +18,9 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SortieRepository extends ServiceEntityRepository
 {
-    private EtatRepository $etatRepository;
-
-    public function __construct(
-        ManagerRegistry $registry,
-        EtatRepository $etatRepository
-    ) {
+    public function __construct(ManagerRegistry $registry)
+    {
         parent::__construct($registry, Sortie::class);
-        $this->etatRepository = $etatRepository;
     }
 
     public function save(Sortie $entity, bool $flush = false): void
@@ -54,9 +49,6 @@ class SortieRepository extends ServiceEntityRepository
         Participant $participant
     ): array {
 
-        $etatPassee = $this->etatRepository->findOneBy(['libelle' => 'Passée']);
-        $etatArchivee = $this->etatRepository->findOneBy(['libelle' => 'Archivée']);
-
         $qb = $this->createQueryBuilder('s')
                     ->join('s.participants', 'p')
                     ->addSelect('p')
@@ -66,7 +58,7 @@ class SortieRepository extends ServiceEntityRepository
                     ->addSelect('e')
                     ->andWhere('s.campus = :campus')
                     ->setParameter('campus', $filtre->getCampus())
-                    ->andWhere("s.etat != {$etatArchivee->getId()}")
+                    ->andWhere('e.libelle != \'Archivée\'')
         ;
 
         if ($filtre->getSearch() !== '') {
@@ -106,7 +98,7 @@ class SortieRepository extends ServiceEntityRepository
         }
 
         if ($filtre->isPassee()) {
-            $qb->andWhere("s.etat = {$etatPassee->getId()}");
+            $qb->andWhere('e.libelle = \'Passée\'');
         }
 
         return $qb->getQuery()->getResult();
