@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div>Nom de La sortie: {{ sortie.nom }}</div>
+    <div>Date de La sortie: {{ sortie.dateHeureDebut | date("d/m/y H:i") }}</div>
+    <div>Campus: {{ sortie.campus.nom }}</div>
+    <div>
+        Lieu: {{ sortie.lieu.nom ~ ' ' ~ sortie.lieu.rue ~ ' ' ~ sortie.lieu.ville.codePostal ~ ' ' ~ sortie.lieu.ville.nom }}</div>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit">Enregistrer</button>
+    <a href="{{ path('sortie_index') }}">Annuler</a>
+    {{ form_end(form) }}
+{% endblock %}
+
