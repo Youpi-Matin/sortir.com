@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {{ etat }}
+    {{ form_start(form) }}
+    <div>Campus: {{ app.user.campus.nom }}</div>
+    {{ form_widget(form) }}
+    {% if etat is same as('Créée') %}
+        <button type="submit">Enregistrer</button>
+        <a href="#">Publier La Sortie</a>
+        <a href="{{ path('sortie_cancel', {'id': sortie_id}) }}">Annuler</a>
+    {% endif %}
+    {{ form_end(form) }}
+
+{% endblock %}

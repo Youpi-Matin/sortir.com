@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -18,18 +19,38 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
+    #[Assert\Length(min: 1, max: 255)]
     private ?string $nom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\NotBlank]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
     #[ORM\Column]
+    #[Assert\Type(
+        type: 'integer',
+        message: 'La valeur {{value}} n\'est pas du type {{type}}.',
+    )]
+    #[Assert\NotBlank]
+    #[Assert\Positive(
+        message: 'La valeur doit etre positive',
+    )]
     private ?int $duree = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\NotBlank]
+    #[Assert\LessThanOrEqual(propertyPath: 'dateHeureDebut')]
     private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\Positive(
+        message: 'La valeur doit etre positive',
+    )]
     private ?int $nbInscriptionsMax = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -37,10 +58,14 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Type(Etat::class)]
+    #[Assert\NotBlank]
     private ?Etat $etat = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Type(Participant::class)]
     private ?Participant $organisateur = null;
 
     #[ORM\ManyToMany(targetEntity: Participant::class, mappedBy: 'inscriptions')]
@@ -48,10 +73,15 @@ class Sortie
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank]
+    #[Assert\Type(Campus::class)]
     private ?Campus $campus = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Valid]
+    #[Assert\NotBlank]
+    #[Assert\Type(Lieu::class)]
     private ?Lieu $lieu = null;
 
     public function __construct()
@@ -72,18 +102,6 @@ class Sortie
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getDateHeureDebut(): ?\DateTimeInterface
-    {
-        return $this->dateHeureDebut;
-    }
-
-    public function setDateHeureDebut(\DateTimeInterface $dateHeureDebut): self
-    {
-        $this->dateHeureDebut = $dateHeureDebut;
 
         return $this;
     }
@@ -110,11 +128,19 @@ class Sortie
      */
     public function setDateLimiteInscription(\DateTimeInterface $dateLimiteInscription): self
     {
-        if ($dateLimiteInscription > $this->getDateHeureDebut()) {
-            throw new ORMException("L'heure de limite d'inscription ne peut etre supérieure à la date de début ");
-        } else {
-            $this->dateLimiteInscription = $dateLimiteInscription;
-        }
+        $this->dateLimiteInscription = $dateLimiteInscription;
+        return $this;
+    }
+
+    public function getDateHeureDebut(): ?\DateTimeInterface
+    {
+        return $this->dateHeureDebut;
+    }
+
+    public function setDateHeureDebut(\DateTimeInterface $dateHeureDebut): self
+    {
+        $this->dateHeureDebut = $dateHeureDebut;
+
         return $this;
     }
 

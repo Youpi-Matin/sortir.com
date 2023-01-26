@@ -13,27 +13,26 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ParticipantController extends AbstractController
 {
-    #[Route('/profil/edit/{id}', name: 'participant_edit', requirements: ['id' => '\d+'])]
+    #[Route('/profil/edit/{id}', name: 'participant_edit')]
     public function edit(Participant $participant, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hasher): Response
     {
-        if ($this->getUser()->getId() != $participant->getId()) {
-            return $this->redirectToRoute('sortie_index');
-        }
-
-        $currentPassword = $this->getUser()->getPassword();
-
         $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
 
         $formulaireParticipant->handleRequest($request);
 
         if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid()) {
-            $participant->setPassword($participant->getPassword());
+            $hashedPassword = $hasher->hashPassword(
+                $participant,
+                $participant->getPassword()
+            );
+            $participant->setPassword($hashedPassword);
+
+
             $entityManager->persist($participant);
             $entityManager->flush();
 
             $this->addFlash('success', "Profil modifié !");
         }
-
         return $this->render('participant/edit.html.twig', [
             'formulaireParticipant' => $formulaireParticipant->createView()
         ]);
@@ -43,7 +42,7 @@ class ParticipantController extends AbstractController
     public function view(Participant $participant): Response
     {
         return $this->render('participant/view.html.twig', [
-        'participant' => $participant
+            'participant' => $participant
         ]);
     }
 }
