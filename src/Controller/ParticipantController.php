@@ -34,7 +34,9 @@ class ParticipantController extends AbstractController
         $formulaireParticipant->handleRequest($request);
 
         if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid()) {
-            if ($participant->getPassword() != $oldPassword) {
+            if (empty($participant->getPassword())) {
+                $participant->setPassword($oldPassword);
+            } else {
                 $participant->setPassword($hasher->hashPassword($participant, $participant->getPassword()));
             }
 
