@@ -47,7 +47,8 @@ class ParticipantController extends AbstractController
         }
 
         return $this->render('participant/edit.html.twig', [
-            'formulaireParticipant' => $formulaireParticipant->createView()
+            'formulaireParticipant' => $formulaireParticipant->createView(),
+            'participant' => $participant
         ]);
     }
 
@@ -58,7 +59,7 @@ class ParticipantController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         return $this->render('participant/view.html.twig', [
-        'participant' => $participant
+            'participant' => $participant
         ]);
     }
 }
