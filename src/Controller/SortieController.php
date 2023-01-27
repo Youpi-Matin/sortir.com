@@ -9,6 +9,7 @@ use App\Model\SortieFiltre;
 use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
 use App\Repository\SortieRepository;
+use App\Service\SortieAvantInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,38 +57,65 @@ class SortieController extends AbstractController
         ]);
     }
 
-    #[Route('/sortie/inscrire/{id<\d+>}', name: 'sortie_inscrire', methods: ['GET'])]
+    #[Route(
+        '/sortie/inscrire/{id<\d+>}',
+        name: 'sortie_inscrire',
+        methods: ['GET']
+    )]
     public function inscrire(
         Sortie $sortie,
-        SortieRepository $sortieRepository,
-        Request $request
+        SortieRepository $sortieRepository
     ): JsonResponse {
 
-        $body = [];
-
-        if ($request->get('action') === 'inscrire') {
+        if (SortieAvantInscription::dansLesTemps($sortie) && SortieAvantInscription::placesDisponibles($sortie)) {
             $sortie->addParticipant($this->getUser());
             $sortieRepository->save($sortie, true);
 
-            $status = 200;
-            $body['status'] = 'success';
-            $body['message'] = 'Votre inscription a bien été enregistrée.';
-            $body['count'] = count($sortie->getParticipants());
-        } elseif ($request->get('action') === 'desinscrire') {
-            $sortie->removeParticipant($this->getUser());
-            $sortieRepository->save($sortie, true);
-
-            $status = 200;
-            $body['status'] = 'success';
-            $body['message'] = 'Votre désinscription a bien été enregistrée.';
-            $body['count'] = count($sortie->getParticipants());
+            return new JsonResponse(
+                [
+                    'status' => 'ok',
+                    'message' => 'Votre inscription a bien été prise en compte.',
+                    'count' => count($sortie->getParticipants()),
+                ],
+                Response::HTTP_OK,
+                [],
+                false
+            );
         } else {
-            $status = 404;
-            $body['status'] = 'error';
-            $body['message'] = 'Cette page n\'existe pas.';
+            return new JsonResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Il n\'est plus possible de s\'inscrire pour cette sortie, soit parce que le nombre maximum de place est atteint, soit parce que la date limite d\'inscription est passée.',
+                ],
+                Response::HTTP_OK,
+                [],
+                false
+            );
         }
+    }
 
-        return new JsonResponse($body, $status, [], false);
+    #[Route(
+        '/sortie/desister/{id<\d+>}',
+        name: 'sortie_desister',
+        methods: ['GET']
+    )]
+    public function desister(
+        Sortie $sortie,
+        SortieRepository $sortieRepository
+    ): JsonResponse {
+        $sortie->removeParticipant($this->getUser());
+        $sortieRepository->save($sortie, true);
+
+        return new JsonResponse(
+            [
+                'status' => 'ok',
+                'message' => 'Votre désistement a bien été pris en compte.',
+                'count' => count($sortie->getParticipants()),
+            ],
+            Response::HTTP_OK,
+            [],
+            false
+        );
     }
 
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
