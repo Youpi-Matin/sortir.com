@@ -17,7 +17,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[UniqueEntity('mail', message: 'Cet email est déjà utilisé.')]
 #[UniqueEntity('pseudo', message: 'Ce pseudo est déjà utilisé.')]
 #[Vich\Uploadable]
-class Participant implements UserInterface, PasswordAuthenticatedUserInterface
+class Participant implements UserInterface, PasswordAuthenticatedUserInterface, \Serializable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -32,7 +32,6 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
-    #[Assert\NotBlank]
     private ?string $motPasse = null;
 
     #[ORM\Column(length: 255)]
@@ -92,7 +91,7 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
     private Collection $inscriptions;
 
-     #[Vich\UploadableField(mapping: 'participant_images', fileNameProperty: 'imageName', size: 'imageSize')]
+    #[Vich\UploadableField(mapping: 'participant_images', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
     #[ORM\Column(type: 'string', nullable: true)]
@@ -350,5 +349,49 @@ class Participant implements UserInterface, PasswordAuthenticatedUserInterface
     public function getImageSize(): ?int
     {
         return $this->imageSize;
+    }
+
+    /**
+     * Selection des paramètres à sérialiser lors de l'enregistrement d'un participant
+     * à l'exclusion de $imageFile
+     *
+     * @return void
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            $this->mail,
+            $this->motPasse,
+            $this->nom,
+            $this->prenom,
+            $this->pseudo,
+            $this->campus,
+            $this->imageName,
+            $this->imageSize,
+            $this->updatedAt
+        ));
+    }
+
+    /**
+     * Selection des paramètres à déssérialiser
+     * à l'exclusion de $imageFile
+     *
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->id,
+            $this->mail,
+            $this->motPasse,
+            $this->nom,
+            $this->prenom,
+            $this->pseudo,
+            $this->campus,
+            $this->imageName,
+            $this->imageSize,
+            $this->updatedAt
+        ) = unserialize($serialized);
     }
 }
