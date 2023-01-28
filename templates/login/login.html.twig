@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login | {{ parent() }}{% endblock %}
 
 {% block body %}
     {% if error %}
