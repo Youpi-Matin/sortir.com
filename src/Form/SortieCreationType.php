@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Etat;
 use App\Entity\Sortie;
+use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -65,6 +66,11 @@ class SortieCreationType extends AbstractType
                 'label' => 'Description et Infos:',
                 'required' => false,
             ])
-            ->add('lieu', LieuType::class);
+            ->add('ville', EntityType::class, [
+                'class' => Ville::class,
+                'choice_label' => 'nom',
+                'placeholder' => 'Selectionnez une ville',
+                'mapped' => false,
+            ]);
     }
 }

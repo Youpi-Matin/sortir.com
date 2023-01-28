@@ -1,14 +1,65 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Créer une sortie{% endblock %}
+
 {% block body %}
 
     {{ etat }}
+
     {{ form_start(form) }}
     <div>Campus: {{ app.user.campus.nom }}</div>
     {{ form_widget(form) }}
-    <button name="action_button" value="create" type="submit">Enregistrer</button>
-    <button name="action_button" value="publish" type="submit">Publier La Sortie</button>
+    <div>
+        <label for="lieux">Lieu</label>
+        <select id="lieux" name="lieux"></select>
+    </div>
+    <button id="create" name="action_button" value="create" type="submit">Enregistrer</button>
+    <button id="publish" name="action_button" value="publish" type="submit">Publier La Sortie</button>
     <a href="{{ path('sortie_index') }}">Annuler</a>
     {{ form_end(form) }}
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        window.onload = () => {
+            submitButton = document.querySelector("#create");
+            publishButton = document.querySelector("#publish");
+            villeSelector = document.querySelector("#sortie_creation_ville");
+
+            submitButton.addEventListener("click", save);
+            publishButton.addEventListener("click", save);
+            villeSelector.addEventListener("change", initListeLieux);
+        }
+
+        function initListeLieux(e) {
+            villeId = (e.target.options.selectedIndex);
+            fetch('http://localhost/api/lieu/ville/'.concat(villeId),
+                {
+                    method: "GET",
+                    headers: {'Accept': 'application/json'}
+                }).then(response => response.json())
+                .then(data => {
+                    let options = "";
+                    let ville = data[0];
+                    for (const lieu of ville.lieux) {
+                        options += `<option value="${lieu.id}">${lieu.nom}</option>`;
+
+                    }
+                    document.querySelector('#lieux').innerHTML = options;
+                })
+        }
+
+
+        function save(e) {
+            e.preventDefault();
+            console.log('clicked !');
+
+
+        }
+
+
+    </script>
 {% endblock %}
