@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Etat;
+use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieCancelType;
@@ -112,11 +113,7 @@ class SortieController extends AbstractController
             if ($request->request->get('action_button') === 'publish') {
                 $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouverte']));
             }
-            $lieu = $sortie->getLieu();
-            $ville = $lieu->getVille();
             $manager = $doctrine->getManager();
-            $manager->persist($ville);
-            $manager->persist($lieu);
             $manager->persist($sortie);
             $manager->flush();
 

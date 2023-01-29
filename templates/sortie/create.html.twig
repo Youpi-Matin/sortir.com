@@ -9,10 +9,7 @@
     {{ form_start(form) }}
     <div>Campus: {{ app.user.campus.nom }}</div>
     {{ form_widget(form) }}
-    <div>
-        <label for="lieux">Lieu</label>
-        <select id="lieux" name="lieux"></select>
-    </div>
+
     <button id="create" name="action_button" value="create" type="submit">Enregistrer</button>
     <button id="publish" name="action_button" value="publish" type="submit">Publier La Sortie</button>
     <a href="{{ path('sortie_index') }}">Annuler</a>
@@ -29,8 +26,8 @@
             publishButton = document.querySelector("#publish");
             villeSelector = document.querySelector("#sortie_creation_ville");
 
-            submitButton.addEventListener("click", save);
-            publishButton.addEventListener("click", save);
+            //submitButton.addEventListener("click", save);
+            //publishButton.addEventListener("click", save);
             villeSelector.addEventListener("change", initListeLieux);
         }
 
@@ -48,18 +45,8 @@
                         options += `<option value="${lieu.id}">${lieu.nom}</option>`;
 
                     }
-                    document.querySelector('#lieux').innerHTML = options;
+                    document.querySelector('#sortie_creation_lieu').innerHTML = options;
                 })
         }
-
-
-        function save(e) {
-            e.preventDefault();
-            console.log('clicked !');
-
-
-        }
-
-
     </script>
 {% endblock %}
