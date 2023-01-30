@@ -11,10 +11,13 @@ use App\Model\SortieFiltre;
 use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
 use App\Repository\SortieRepository;
+use App\Service\SortieAvantInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
@@ -56,37 +59,67 @@ class SortieController extends AbstractController
         ]);
     }
 
+    #[Route(
+        '/sortie/inscrire/{id<\d+>}',
+        name: 'sortie_inscrire',
+        methods: ['GET']
+    )]
+    public function inscrire(
+        Sortie $sortie,
+        SortieRepository $sortieRepository
+    ): JsonResponse {
 
-    /** Affichage d'une sortie
-     * @param int $id
-     * @param ManagerRegistry $doctrine
-     * @return Response
-     */
-    #[Route('sortie/view/{id}', name: 'sortie_view')]
-    public function view(int $id, ManagerRegistry $doctrine): Response
-    {
-        // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        if (SortieAvantInscription::dansLesTemps($sortie) && SortieAvantInscription::placesDisponibles($sortie)) {
+            $sortie->addParticipant($this->getUser());
+            $sortieRepository->save($sortie, true);
 
-        // Récupère l'orginisateur de la sortie
-        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
-
-        // Si la sortie n'existe pas
-        if (!$sortie) {
-            throw $this->createNotFoundException('La sortie n\'existe pas');
+            return new JsonResponse(
+                [
+                    'status' => 'ok',
+                    'message' => 'Votre inscription a bien été prise en compte.',
+                    'count' => count($sortie->getParticipants()),
+                ],
+                Response::HTTP_OK,
+                [],
+                false
+            );
+        } else {
+            return new JsonResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Il n\'est plus possible de s\'inscrire pour cette sortie, soit parce que le nombre maximum de place est atteint, soit parce que la date limite d\'inscription est passée.',
+                ],
+                Response::HTTP_OK,
+                [],
+                false
+            );
         }
-
-        return $this->render('sortie/view.html.twig', [
-            'sortie' => $sortie,
-        ]);
     }
 
-    /** Creation d'une nouvelle sortie
-     * @param Request $request
-     * @param ManagerRegistry $doctrine
-     * @return Response
-     * @throws \Doctrine\ORM\Exception\ORMException
-     */
+    #[Route(
+        '/sortie/desister/{id<\d+>}',
+        name: 'sortie_desister',
+        methods: ['GET']
+    )]
+    public function desister(
+        Sortie $sortie,
+        SortieRepository $sortieRepository
+    ): JsonResponse {
+        $sortie->removeParticipant($this->getUser());
+        $sortieRepository->save($sortie, true);
+
+        return new JsonResponse(
+            [
+                'status' => 'ok',
+                'message' => 'Votre désistement a bien été pris en compte.',
+                'count' => count($sortie->getParticipants()),
+            ],
+            Response::HTTP_OK,
+            [],
+            false
+        );
+    }
+
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, ManagerRegistry $doctrine): Response
     {

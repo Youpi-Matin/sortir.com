@@ -21,20 +21,32 @@
       </tr>
     </thead>
     <tbody>
+      {% set statuts = { inscrit: { label: 'Se désister', action: 'desister' }, noninscrit: { label: "S'inscrire", action: 'inscrire' } } %}
       {% for sortie in sorties %}
-        <tr>
+        {% set statutUser = app.user in sortie.participants ? 'inscrit' : 'noninscrit' %}
+        <tr data-controller="sortie-des-inscription" data-sortie-action="{{ statuts[statutUser]['action'] }}">
           <td>{{ sortie.nom }}</td>
           <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
           <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
-          <td></td>
+          <td>
+            <span id="sortie-action-count">{{ sortie.participants|length }}</span> / {{ sortie.nbInscriptionsMax }}
+          </td>
           <td>{{ sortie.etat.libelle }}</td>
           <td>
-            {% if app.user in sortie.participants %}X{% endif %}
+            <span id="sortie-action-statut">{% if app.user in sortie.participants %}X{% endif %}</span>
           </td>
           <td>
             <a href="">{{ sortie.organisateur.pseudo }}</a>
           </td>
-          <td></td>
+          <td>
+            <span id="sortie-actions-participant">
+              {% for statut in statuts %}
+                <a href="{{ path('sortie_' ~ statut.action, { id: sortie.id }) }}" data-sortie-action="{{ statut.action }}" class="{{ statut.action == statuts[statutUser]['action'] ? '' : 'hidden' }}">{{ statut.label }}</a>
+              {% endfor %}
+            </span>
+
+            <span id="sortie-actions-admin"></span>
+          </td>
         </tr>
       {% endfor %}
     </tbody>
