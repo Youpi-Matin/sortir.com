@@ -52,7 +52,6 @@ class ParticipantType extends AbstractType
                 'download_label' => 'Télécharger',
                 /*
                 'allow_delete' => true,
-
                 'asset_helper' => true, */
                 ])
         ;

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Participant;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ParticipantType;
+use App\Form\ParticipantUploadType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -60,6 +61,21 @@ class ParticipantController extends AbstractController
 
         return $this->render('participant/view.html.twig', [
             'participant' => $participant
+        ]);
+    }
+
+    #[Route('/upload/', name: 'participant_upload')]
+    public function upload(Request $request): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $formulaireListeParticipants = $this->createForm(ParticipantUploadType::class);
+
+        $formulaireListeParticipants->handleRequest($request);
+
+        return $this->render('participant/upload.html.twig', [
+            'formulaireUploadParticipants' => $formulaireListeParticipants->createView(),
         ]);
     }
 }
