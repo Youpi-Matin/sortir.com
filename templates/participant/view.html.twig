@@ -1,13 +1,15 @@
 {% extends 'base.html.twig' %}
 {% set title = "Mon profil" %}
 
-{% block title %}{{title}}{% endblock %}
+{% block title %}
+	{{title}}
+{% endblock %}
 
 {% block body %}
 
 	<h1>{{participant.pseudo}}</h1>
 
-	<img src="" alt="" height="200" width="200">
+	<img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200">
 
 	<p>
 		<span>Prénom :</span>

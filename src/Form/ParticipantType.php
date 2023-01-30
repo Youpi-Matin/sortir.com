@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\FormInterface;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ParticipantType extends AbstractType
 {
@@ -41,11 +42,19 @@ class ParticipantType extends AbstractType
                 'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
                     $participant->setPassword((string)$password);
                 },
-                //'mapped' => false,
                 'required' => false,
-
             ])
             ->add('campus')
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Ma photo',
+                'required' => false,
+                'delete_label' => 'Supprimer',
+                'download_label' => 'Télécharger',
+                /*
+                'allow_delete' => true,
+
+                'asset_helper' => true, */
+                ])
         ;
     }
 
