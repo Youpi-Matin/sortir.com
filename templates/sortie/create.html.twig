@@ -1,14 +1,22 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Créer une sortie{% endblock %}
+
 {% block body %}
 
     {{ etat }}
+
     {{ form_start(form) }}
     <div>Campus: {{ app.user.campus.nom }}</div>
     {{ form_widget(form) }}
-    <button name="action_button" value="create" type="submit">Enregistrer</button>
-    <button name="action_button" value="publish" type="submit">Publier La Sortie</button>
+    <button id="create" name="action_button" value="create" type="submit">Enregistrer</button>
+    <button id="publish" name="action_button" value="publish" type="submit">Publier La Sortie</button>
     <a href="{{ path('sortie_index') }}">Annuler</a>
     {{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
 
 {% endblock %}
