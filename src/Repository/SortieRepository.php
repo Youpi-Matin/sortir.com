@@ -50,51 +50,44 @@ class SortieRepository extends ServiceEntityRepository
     ): array {
 
         $qb = $this->createQueryBuilder('s')
-                    ->join('s.participants', 'p')
-                    ->addSelect('p')
-                    ->join('s.organisateur', 'o')
-                    ->addSelect('o')
-                    ->join('s.etat', 'e')
-                    ->addSelect('e')
-                    ->andWhere('s.campus = :campus')
-                    ->setParameter('campus', $filtre->getCampus())
-                    ->andWhere('e.libelle != \'Archivée\'')
+            ->leftJoin('s.participants', 'p')
+            ->addSelect('p')
+            ->join('s.organisateur', 'o')
+            ->addSelect('o')
+            ->join('s.etat', 'e')
+            ->addSelect('e')
+            ->andWhere('s.campus = :campus')
+            ->setParameter('campus', $filtre->getCampus())//->andWhere('e.libelle != \'Archivée\'')
         ;
 
         if ($filtre->getSearch() !== '') {
             $qb->andWhere('s.nom LIKE :search')
-                ->setParameter('search', "%{$filtre->getSearch()}%")
-            ;
+                ->setParameter('search', "%{$filtre->getSearch()}%");
         }
 
         if ($filtre->getDateMin()) {
             $qb->andWhere('s.dateHeureDebut >= :dateMin')
-                ->setParameter('dateMin', $filtre->getDateMin())
-            ;
+                ->setParameter('dateMin', $filtre->getDateMin());
         }
 
         if ($filtre->getDateMax()) {
             $qb->andWhere('s.dateHeureDebut <= :dateMax')
-                ->setParameter('dateMax', $filtre->getDateMax())
-            ;
+                ->setParameter('dateMax', $filtre->getDateMax());
         }
 
         if ($filtre->isOrganisateurice()) {
             $qb->andWhere('s.organisateur = :organisateur')
-                ->setParameter('organisateur', $participant)
-            ;
+                ->setParameter('organisateur', $participant);
         }
 
         if ($filtre->isInscrite()) {
             $qb->andWhere(':inscrite MEMBER OF s.participants')
-                ->setParameter('inscrite', $participant)
-            ;
+                ->setParameter('inscrite', $participant);
         }
 
         if ($filtre->isNoninscrite()) {
             $qb->andWhere(':inscrite NOT MEMBER OF s.participants')
-                ->setParameter('inscrite', $participant)
-            ;
+                ->setParameter('inscrite', $participant);
         }
 
         if ($filtre->isPassee()) {

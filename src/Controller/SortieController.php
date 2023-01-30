@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Etat;
-use App\Entity\Lieu;
 use App\Entity\Participant;
 use App\Entity\Sortie;
 use App\Form\SortieCancelType;
@@ -11,6 +10,7 @@ use App\Form\SortieUpdateType;
 use App\Model\SortieFiltre;
 use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
+use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
 use App\Service\SortieAvantInscription;
 use Doctrine\Persistence\ManagerRegistry;
@@ -18,7 +18,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SortieController extends AbstractController
@@ -26,10 +25,10 @@ class SortieController extends AbstractController
     #[Route('/', name: 'sortie_index')]
     public function index(
         Request $request,
-        SortieRepository $sortieRepository
+        SortieRepository $sortieRepository,
+        ParticipantRepository $participantRepository,
     ): Response {
-        /** @var Participant */
-        $user = $this->getUser();
+        $user = $participantRepository->findOneBy(['mail' => $this->getUser()->getUserIdentifier()]);
         $filtre = (new SortieFiltre())
             ->setCampus($user->getCampus());
 
@@ -326,5 +325,29 @@ class SortieController extends AbstractController
         $this->addFlash('success', 'Sortie Supprimée avec succès');
 
         return $this->redirectToRoute('sortie_index');
+    }
+
+    /** Affichage d'une sortie
+     * @param int $id
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     */
+    #[Route('sortie/view/{id}', name: 'sortie_view')]
+    public function view(int $id, ManagerRegistry $doctrine): Response
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Récupère l'orginisateur de la sortie
+        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+
+        // Si la sortie n'existe pas
+        if (!$sortie) {
+            throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
+
+        return $this->render('sortie/view.html.twig', [
+            'sortie' => $sortie,
+        ]);
     }
 }
