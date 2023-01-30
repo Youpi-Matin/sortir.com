@@ -28,7 +28,8 @@ class SortieController extends AbstractController
         SortieRepository $sortieRepository,
         ParticipantRepository $participantRepository,
     ): Response {
-        $user = $participantRepository->findOneBy(['mail' => $this->getUser()->getUserIdentifier()]);
+        /** @var Participant $user */
+        $user = $this->getUser();
         $filtre = (new SortieFiltre())
             ->setCampus($user->getCampus());
 
@@ -70,7 +71,9 @@ class SortieController extends AbstractController
     ): JsonResponse {
 
         if (SortieAvantInscription::dansLesTemps($sortie) && SortieAvantInscription::placesDisponibles($sortie)) {
-            $sortie->addParticipant($this->getUser());
+            /** @var Participant $user */
+            $user = $this->getUser();
+            $sortie->addParticipant($user);
             $sortieRepository->save($sortie, true);
 
             return new JsonResponse(
@@ -105,7 +108,9 @@ class SortieController extends AbstractController
         Sortie $sortie,
         SortieRepository $sortieRepository
     ): JsonResponse {
-        $sortie->removeParticipant($this->getUser());
+        /** @var Participant $user */
+        $user = $this->getUser();
+        $sortie->removeParticipant($user);
         $sortieRepository->save($sortie, true);
 
         return new JsonResponse(
@@ -126,7 +131,7 @@ class SortieController extends AbstractController
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         // Récupère l'organisteur
-        /** @var \App\Entity\Participant $user */
+        /** @var Participant $user */
         $user = $this->getUser();
 
         $sortie = new Sortie();
