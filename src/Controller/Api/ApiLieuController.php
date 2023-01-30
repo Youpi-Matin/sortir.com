@@ -21,7 +21,7 @@ class ApiLieuController extends AbstractController
             ->addSelect('l')
             ->andWhere('v.id = :id')
             ->setParameter('id', $id)
-            ->getQuery()->getResult();
+            ->getQuery()->getSingleResult();
 
         return $this->json($result, Response::HTTP_OK, [], ['groups' => 'liste_lieux']);
     }
