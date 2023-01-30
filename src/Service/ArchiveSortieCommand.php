@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,6 +19,9 @@ class ArchiveSortieCommand extends Command
     }
 
 
+    /**Traitement de l'archivage des sorties
+     * @throws ORMException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln([
@@ -26,12 +30,25 @@ class ArchiveSortieCommand extends Command
             '',
         ]);
 
-        $output->writeln($this->manager->findSortiesAArchiver());
-        // this method must return an integer number with the "exit status code"
-        // of the command. You can also use these constants to make code more readable
-
-        // return this if there was no problem running the command
-        // (it's equivalent to returning int(0))
+        $sorties = $this->manager->findSortiesAArchiver();
+        if (count($sorties) > 0) {
+            $output->writeln([
+                count($sorties) . ' sorties trouvées pour archivage',
+            ]);
+            foreach ($sorties as $sortie) {
+                $output->writeln([
+                    '===================',
+                    'Archivage de:',
+                    'Nom: ' . $sortie->getNom(),
+                    'Date: ' . date_format($sortie->getDateLimiteInscription(), 'Y-m-d'),
+                    'Statut: ' . $sortie->getEtat()->getLibelle(),
+                    '===================',
+                ]);
+                $this->manager->archiveSortie($sortie);
+            }
+        } else {
+            $output->writeln('Aucune sortie trouvée pour archivage');
+        }
         return Command::SUCCESS;
 
         // or return this if some error happened during the execution
