@@ -21,8 +21,12 @@ class ParticipantController extends AbstractController
      *
      */
     #[Route('/profil/edit/{id}', name: 'participant_edit', requirements: ['id' => '\d+'])]
-    public function edit(Participant $participant, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hasher): Response
-    {
+    public function edit(
+        Participant $participant,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $hasher
+    ): Response {
 
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
