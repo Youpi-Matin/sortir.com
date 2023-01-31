@@ -14,11 +14,12 @@ class ParticipantUploadType extends AbstractType
         $builder
             ->add('participantListeFile', VichFileType::class, [
                 'label' => 'Fichier .csv',
-                'required' => false,
-                'allow_delete' => true,
+                'required' => true,
+                'allow_delete' => false,
+                'download_uri' => false,
                 'delete_label' => 'Supprimer',
                 'download_label' => 'Télécharger',
-                'asset_helper' => true,
+                'asset_helper' => false,
             ])
         ;
     }

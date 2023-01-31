@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Participant;
+use App\Service\ParticipantUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ParticipantType;
 use App\Form\ParticipantUploadType;
@@ -14,13 +15,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ParticipantController extends AbstractController
 {
+    /**
+     *
+     * Edit Profil
+     *
+     */
     #[Route('/profil/edit/{id}', name: 'participant_edit', requirements: ['id' => '\d+'])]
-    public function edit(
-        Participant $participant,
-        Request $request,
-        EntityManagerInterface $entityManager,
-        UserPasswordHasherInterface $hasher
-    ): Response {
+    public function edit(Participant $participant, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $hasher): Response
+    {
+
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -53,6 +56,11 @@ class ParticipantController extends AbstractController
         ]);
     }
 
+    /**
+     *
+     * Show Profil
+     *
+     */
     #[Route('/profil/{id}', name: 'participant_view')]
     public function view(Participant $participant): Response
     {
@@ -64,18 +72,33 @@ class ParticipantController extends AbstractController
         ]);
     }
 
+    /**
+     *
+     * Upload
+     *
+     */
     #[Route('/upload/', name: 'participant_upload')]
-    public function upload(Request $request): Response
+    public function upload(Request $request, ParticipantUploadService $participantUploadService): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $formulaireListeParticipants = $this->createForm(ParticipantUploadType::class);
+        $formulaireUploadParticipants = $this->createForm(ParticipantUploadType::class);
 
-        $formulaireListeParticipants->handleRequest($request);
+        $formulaireUploadParticipants->handleRequest($request);
+
+        if ($formulaireUploadParticipants->isSubmitted() && $formulaireUploadParticipants->isValid()) {
+            // get file in filebag objects
+            $file = $request->files->get('participant_upload')['participantListeFile']['file'];
+
+            // Upload participant
+            $participantUploadService->importParticipants($file);
+
+            $this->addFlash('success', "Liste importée !");
+        }
 
         return $this->render('participant/upload.html.twig', [
-            'formulaireUploadParticipants' => $formulaireListeParticipants->createView(),
+            'formulaireUploadParticipants' => $formulaireUploadParticipants->createView()
         ]);
     }
 }
