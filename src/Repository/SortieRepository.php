@@ -57,8 +57,7 @@ class SortieRepository extends ServiceEntityRepository
             ->join('s.etat', 'e')
             ->addSelect('e')
             ->andWhere('s.campus = :campus')
-            ->setParameter('campus', $filtre->getCampus())//->andWhere('e.libelle != \'Archivée\'')
-        ;
+            ->setParameter('campus', $filtre->getCampus())->andWhere('e.libelle != \'Archivée\'');
 
         if ($filtre->getSearch() !== '') {
             $qb->andWhere('s.nom LIKE :search')

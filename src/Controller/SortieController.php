@@ -125,6 +125,12 @@ class SortieController extends AbstractController
         );
     }
 
+    /**
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @return Response
+     * @throws \Doctrine\ORM\Exception\ORMException
+     */
     #[Route('/sortie/create', name: 'sortie_create', methods: ['GET', 'POST'])]
     public function create(Request $request, ManagerRegistry $doctrine): Response
     {
@@ -338,17 +344,18 @@ class SortieController extends AbstractController
      * @return Response
      */
     #[Route('sortie/view/{id}', name: 'sortie_view')]
-    public function view(int $id, ManagerRegistry $doctrine): Response
+    public function view(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        // Récupère l'orginisateur de la sortie
-        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
-
         // Si la sortie n'existe pas
         if (!$sortie) {
             throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
+
+        if ($sortie->getEtat()->getLibelle() === 'Archivée') {
+            throw $this->createNotFoundException('La sortie n\'existe plus');
         }
 
         return $this->render('sortie/view.html.twig', [
