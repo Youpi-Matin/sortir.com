@@ -62,15 +62,6 @@ class AppVoter extends Voter
         if ($this->canEdit($subject, $user)) {
             return true;
         }
-        // Si on peut s'inscrire on peut voir
-        if ($this->canSubscribe($subject, $user)) {
-            return true;
-        }
-        // Si on peut se desinsdcrire, on peut voir
-        if ($this->canUnsubscribe($subject, $user)) {
-            return true;
-        }
-
         return true;
     }
 

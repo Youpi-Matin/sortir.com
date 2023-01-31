@@ -72,6 +72,8 @@ class SortieController extends AbstractController
         Sortie $sortie,
         SortieRepository $sortieRepository
     ): JsonResponse {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('subscribe', $sortie);
 
         if (SortieAvantInscription::dansLesTemps($sortie) && SortieAvantInscription::placesDisponibles($sortie)) {
             /** @var Participant $user */
@@ -112,6 +114,9 @@ class SortieController extends AbstractController
         Sortie $sortie,
         SortieRepository $sortieRepository
     ): JsonResponse {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('unsubscribe', $sortie);
+
         /** @var Participant $user */
         $user = $this->getUser();
         $sortie->removeParticipant($user);
@@ -129,7 +134,7 @@ class SortieController extends AbstractController
         );
     }
 
-    /**
+    /** Creation d'un sortie
      * @param Request $request
      * @param ManagerRegistry $doctrine
      * @return Response
@@ -182,11 +187,16 @@ class SortieController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return Response
      */
-    #[Route('sortie/publish/{id}', name: 'sortie_publish')]
+    #[Route('sortie/publish/{id<\d+>}', name: 'sortie_publish')]
     public function publish(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('edit', $sortie);
+
+        // Si la sortie n'existe pas
+        if (!$sortie) {
+            throw $this->createNotFoundException('La sortie n\'existe pas');
+        }
 
         $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouverte']));
         $manager = $doctrine->getManager();
@@ -204,7 +214,7 @@ class SortieController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return Response
      */
-    #[Route('/sortie/update/{id}', name: 'sortie_update', methods: ['GET', 'POST'])]
+    #[Route('/sortie/update/{id<\d+>}', name: 'sortie_update', methods: ['GET', 'POST'])]
     public function update(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si pas l'organisateur ou pas admin
@@ -245,7 +255,7 @@ class SortieController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return Response
      */
-    #[Route('sortie/cancel/{id}', name: 'sortie_cancel', methods: ['POST', 'GET'])]
+    #[Route('sortie/cancel/{id<\d+>}', name: 'sortie_cancel', methods: ['POST', 'GET'])]
     public function cancel(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si pas l'organisateur ou pas admin
@@ -288,7 +298,7 @@ class SortieController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return Response
      */
-    #[Route('sortie/delete/{id}', name: 'sortie_delete')]
+    #[Route('sortie/delete/{id<\d+>}', name: 'sortie_delete')]
     public function delete(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si pas l'organisateur ou pas admin
@@ -313,11 +323,11 @@ class SortieController extends AbstractController
      * @param ManagerRegistry $doctrine
      * @return Response
      */
-    #[Route('sortie/view/{id}', name: 'sortie_view')]
+    #[Route('sortie/view/{id<\d+>}', name: 'sortie_view')]
     public function view(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('view', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
