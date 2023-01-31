@@ -29,6 +29,12 @@ class Sortie
     #[Assert\NotBlank]
     private ?\DateTimeInterface $dateHeureDebut = null;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\Type(\DateTimeInterface::class)]
+    #[Assert\NotBlank]
+    #[Assert\LessThanOrEqual(propertyPath: 'dateHeureDebut')]
+    private ?\DateTimeInterface $dateLimiteInscription = null;
+
     #[ORM\Column]
     #[Assert\Type(
         type: 'integer',
@@ -39,12 +45,6 @@ class Sortie
         message: 'La valeur doit etre positive',
     )]
     private ?int $duree = null;
-
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Assert\Type(\DateTimeInterface::class)]
-    #[Assert\NotBlank]
-    #[Assert\LessThanOrEqual(propertyPath: 'dateHeureDebut')]
-    private ?\DateTimeInterface $dateLimiteInscription = null;
 
     #[ORM\Column]
     #[Assert\NotBlank]

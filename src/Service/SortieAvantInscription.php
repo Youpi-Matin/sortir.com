@@ -9,9 +9,8 @@ class SortieAvantInscription
 {
     public static function dansLesTemps(Sortie $sortie)
     {
-        $now = new DateTime();
-
-        return $sortie->getDateLimiteInscription() > $now;
+        $now = (new DateTime())->getTimestamp();
+        return $now < $sortie->getDateLimiteInscription()->modify('+1 Day')->getTimestamp();
     }
 
     public static function placesDisponibles(Sortie $sortie)

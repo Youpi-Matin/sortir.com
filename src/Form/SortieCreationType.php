@@ -55,10 +55,6 @@ class SortieCreationType extends AbstractType
                 'widget' => 'single_text',
                 'empty_data' => new \DateTime('now'),
             ])
-            ->add('duree', IntegerType::class, [
-                'label' => 'Duree (minutes):',
-                'required' => true,
-            ])
             ->add('dateLimiteInscription', DateType::class, [
                 'label' => 'Date limite d\'inscription',
                 'required' => true,
@@ -67,6 +63,10 @@ class SortieCreationType extends AbstractType
             ])
             ->add('nbInscriptionsMax', IntegerType::class, [
                 'label' => 'Nombre de places:',
+            ])
+            ->add('duree', IntegerType::class, [
+                'label' => 'Duree (minutes):',
+                'required' => true,
             ])
             ->add('infosSortie', TextareaType::class, [
                 'label' => 'Description et Infos:',
@@ -82,6 +82,7 @@ class SortieCreationType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => '...',
+                'empty_data' => '',
             ]);
     }
 }

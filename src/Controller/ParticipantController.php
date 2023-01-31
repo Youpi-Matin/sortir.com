@@ -23,13 +23,31 @@ class ParticipantController extends AbstractController
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        if ($this->getUser() !== $participant) {
+        /** @var Participant $user */
+        $user = $this->getUser();
+
+        if ($user !== $participant and !$user->isAdministrateur()) {
             throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
         }
 
-        $oldPassword = $this->getUser()->getPassword();
+        $oldPassword = $user->getPassword();
 
-        $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
+        /**
+         * SI l'utilisateur connecté est admlinistrateur, alors on affiche le choix du campus dans le formulaire
+         */
+        if ($user->isAdministrateur()) {
+            $formOptions = array(
+                'canEditCampus' => true,
+                'canEditPassword' => false,
+            );
+        } else {
+            $formOptions = array(
+                'canEditCampus' => false,
+                'canEditPassword' => true,
+            );
+        }
+
+        $formulaireParticipant = $this->createForm(ParticipantType::class, $participant, $formOptions);
 
         $formulaireParticipant->handleRequest($request);
 
