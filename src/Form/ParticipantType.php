@@ -50,9 +50,6 @@ class ParticipantType extends AbstractType
                 'required' => false,
                 'delete_label' => 'Supprimer',
                 'download_label' => 'Télécharger',
-                /*
-                'allow_delete' => true,
-                'asset_helper' => true, */
                 ])
         ;
     }
