@@ -19,17 +19,13 @@
     <a href="{{ path('sortie_index') }}" class="text-3xl">sortir.com</a>
 
     <nav class="flex flex-row justify-end gap-4">
-        {% if is_granted('ROLE_USER') %}
-            {% if is_granted('ROLE_ADMIN') %}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            {% if is_granted('admin') %}
                 <a href="#">Villes</a>
                 <a href="#">Campus</a>
             {% endif %}
             <a href="{{ path('sortie_index') }}">Accueil</a>
             <a href="{{ path('participant_edit', {'id': app.user.id}) }}">Mon profil</a>
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="#">Admin</a>
-            {% endif %}
-
             <a href="{{ path('login_logout') }}">Se déconneter</a>
         {% endif %}
     </nav>

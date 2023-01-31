@@ -21,14 +21,10 @@ class ParticipantController extends AbstractController
         UserPasswordHasherInterface $hasher
     ): Response {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('edit', $participant);
 
         /** @var Participant $user */
         $user = $this->getUser();
-
-        if ($user !== $participant and !$user->isAdministrateur()) {
-            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
-        }
 
         $oldPassword = $user->getPassword();
 
@@ -74,7 +70,7 @@ class ParticipantController extends AbstractController
     public function view(Participant $participant): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('view');
 
         return $this->render('participant/view.html.twig', [
             'participant' => $participant

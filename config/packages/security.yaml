@@ -52,7 +52,6 @@ security:
         # Si pas authentifié alors login only
         - { path: ^/login$, roles: PUBLIC_ACCESS }
         - { path: ^/reset-password, roles: PUBLIC_ACCESS }
-        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
 
         # - { path: ^/admin, roles: ROLE_ADMIN }

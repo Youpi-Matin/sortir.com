@@ -183,25 +183,11 @@ class SortieController extends AbstractController
      * @return Response
      */
     #[Route('sortie/publish/{id}', name: 'sortie_publish')]
-    public function publish(int $id, Request $request, ManagerRegistry $doctrine): Response
+    public function publish(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('edit', $sortie);
 
-        // Récupère l'orginisateur de la sortie
-        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
-
-        if ($id === 0) {
-            dd($request->getRequestUri());
-        }
-
-
-        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
-        if ($sortie->getOrganisateur() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
-        }
-
-        $sortie = $doctrine->getRepository(Sortie::class)->find($id);
         $sortie->setEtat($doctrine->getRepository(Etat::class)->findOneBy(['libelle' => 'Ouverte']));
         $manager = $doctrine->getManager();
         $manager->persist($sortie);
@@ -221,18 +207,12 @@ class SortieController extends AbstractController
     #[Route('/sortie/update/{id}', name: 'sortie_update', methods: ['GET', 'POST'])]
     public function update(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
-        // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        // Interdit l'acces si pas l'organisateur ou pas admin
+        $this->denyAccessUnlessGranted('edit', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
             throw $this->createNotFoundException('La sortie n\'existe pas');
-        }
-
-
-        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
-        if ($sortie->getOrganisateur() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
         }
 
         $form = $this->createForm(SortieUpdateType::class, $sortie);
@@ -268,8 +248,8 @@ class SortieController extends AbstractController
     #[Route('sortie/cancel/{id}', name: 'sortie_cancel', methods: ['POST', 'GET'])]
     public function cancel(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
-        // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        // Interdit l'acces si pas l'organisateur ou pas admin
+        $this->denyAccessUnlessGranted('edit', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
@@ -309,23 +289,16 @@ class SortieController extends AbstractController
      * @return Response
      */
     #[Route('sortie/delete/{id}', name: 'sortie_delete')]
-    public function delete(int $id, ManagerRegistry $doctrine): Response
+    public function delete(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
-        // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        // Récupère la sortie
-        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
+        // Interdit l'acces si pas l'organisateur ou pas admin
+        $this->denyAccessUnlessGranted('edit', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
             throw $this->createNotFoundException('La sortie n\'existe pas');
         }
 
-        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
-        if ($sortie->getOrganisateur() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
-        }
         $manager = $doctrine->getManager();
         $manager->remove($sortie);
         $manager->flush();
