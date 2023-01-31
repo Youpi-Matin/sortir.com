@@ -3,22 +3,39 @@
 {% set title = "Mon profil" %}
 
 {% block title %}
-	{{title}}
+    {{ title }}
 {% endblock %}
 
 {% block body %}
 
-	<h1>{{title}}</h1>
-	{# <img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200"> #}
+    {% if is_granted('ROLE_ADMIN') %}
+        <h1>{{ app.user.pseudo }}</h1>
+    {% else %}
+        <h1>Mon profil</h1>
+    {% endif %}
+    {# <img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200"> #}
 
-	{{ form_start(formulaireParticipant) }}
+    {{ form_start(formulaireParticipant) }}
 
-	{% block vich_image_widget %}
-		{{ form_widget(formulaireParticipant.imageFile) }}
-	{% endblock %}
+    {% block vich_image_widget %}
+        {{ form_widget(formulaireParticipant.imageFile) }}
+    {% endblock %}
 
-	{{ form_widget(formulaireParticipant) }}
-	<input type="submit" value="Enregistrer"/>
-	<a href="">Annuler</a>
-	{{ form_end(formulaireParticipant) }}
+    {{ form_row(formulaireParticipant.pseudo) }}
+    {{ form_row(formulaireParticipant.prenom) }}
+    {{ form_row(formulaireParticipant.nom) }}
+    {{ form_row(formulaireParticipant.telephone) }}
+    {{ form_row(formulaireParticipant.mail) }}
+    {{ form_row(formulaireParticipant.motPasse) }}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ form_row(formulaireParticipant.campus) }}
+    {% else %}
+        Campus: {{ app.user.campus }}
+    {% endif %}
+    <input type="submit" value="Enregistrer"/>
+    <a href="">Annuler</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <button href="">Désactiver le compte</button>
+    {% endif %}
+    {{ form_end(formulaireParticipant) }}
 {% endblock %}

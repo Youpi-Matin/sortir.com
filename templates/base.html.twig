@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Accueil{% endblock %} | sortir.com</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Accueil{% endblock %} | sortir.com</title>
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
-    </head>
-    <body class="min-h-screen flex flex-col">
-        <header class="flex flex-row justify-between items-center">
-            <a href="#" class="text-3xl">sortir.com</a>
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
+</head>
+<body class="min-h-screen flex flex-col">
+<header class="flex flex-row justify-between items-center">
+    <a href="#" class="text-3xl">sortir.com</a>
 
-            <nav class="flex flex-row justify-end gap-4">
-                <a href="">test</a>
-                <a href="">test</a>
-                <a href="">test</a>
-                <a href="">test</a>
-                {% if is_granted('ROLE_ADMIN')  %}
-                    <a href="#">Admin</a>
-                {% endif %}
-                {% if is_granted('ROLE_USER')  %}
-                    <span>Bienvenue: {{  app.user.pseudo }}</span>
-                    <a href="{{ path('login_logout') }}">logout</a>
-                {% endif %}
-            </nav>
-        </header>
+    <nav class="flex flex-row justify-end gap-4">
+        {% if is_granted('ROLE_USER') %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="#">Villes</a>
+                <a href="#">Campus</a>
+            {% endif %}
+            <a href="{{ path('sortie_index') }}">Accueil</a>
+            <a href="{{ path('participant_edit', {'id': app.user.id}) }}">Mon profil</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="#">Admin</a>
+            {% endif %}
 
-		{% for label, messages in app.flashes %}
-			{% for message in messages %}
-				<div class="alert-{{ label }}">{{ message }}</div>
-			{% endfor %}
-		{% endfor %}
+            <a href="{{ path('login_logout') }}">Se déconneter</a>
+        {% endif %}
+    </nav>
+</header>
 
-        <main class="grow">
-            {% block body %}{% endblock %}
-        </main>
-        
-        <footer>
-            <p>© Youpi Matin, 2022</p>
-        </footer>
-    </body>
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert-{{ label }}">{{ message }}</div>
+    {% endfor %}
+{% endfor %}
+
+<main class="grow">
+    {% block body %}{% endblock %}
+</main>
+
+<footer>
+    <p>© Youpi Matin, 2022</p>
+</footer>
+</body>
 </html>
