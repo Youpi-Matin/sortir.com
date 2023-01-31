@@ -1,7 +1,16 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Filtrer les sorties</h1>
+    <div class="flex flex-col items-end">
+        <div class="font-bold">
+            Date du jour: <span>{{ today | date('d/m/Y') }}</span>
+        </div>
+
+        <div class="font-bold">
+            Participant: <span>{{ app.user.pseudo }}</span>
+        </div>
+    </div>
+    <h1 class="font-bold">Filtrer les sorties</h1>
     {{ form_start(form) }}
     {{ form_widget(form) }}
 
@@ -38,7 +47,7 @@
                     <span id="sortie-action-statut">{% if app.user in sortie.participants %}X{% endif %}</span>
                 </td>
                 <td>
-                    <a href="">{{ sortie.organisateur.pseudo }}</a>
+                    <a href="{{ path('participant_view', {id: sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a>
                 </td>
                 <td>
             <span id="sortie-actions-participant">
@@ -51,8 +60,28 @@
 
                     <span id="sortie-actions-admin"></span>
                 </td>
+                <td>
+                    {% if
+                        sortie.etat.libelle is same as "Activité en cours" %}
+                        <a href="{{ path('sortie_view', {id: sortie.id}) }}">Afficher</a>
+                    {% elseif
+                        ((sortie.etat.libelle is same as "Ouverte")
+                        or (sortie.etat.libelle is same as "Créée"))
+                        and sortie.organisateur is same as (app.user) %}
+                        <a href="{{ path('sortie_update', {id: sortie.id}) }}">Modifier</a>
+                        <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Annuler</a>
+                    {% endif %}
+                    {% if
+                        (sortie.etat.libelle is same as "Créée")
+                        and sortie.organisateur is same as (app.user) %}
+                        <a href="{{ path('sortie_publish', {id: sortie.id}) }}">Publier</a>
+                    {% endif %}
+
+                </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+
+    <a href="{{ path('sortie_create') }}">Créer une sortie</a>
 {% endblock %}

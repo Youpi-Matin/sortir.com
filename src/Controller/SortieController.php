@@ -28,6 +28,8 @@ class SortieController extends AbstractController
         SortieRepository $sortieRepository,
         ParticipantRepository $participantRepository,
     ): Response {
+        // Récupération de la date du jour pour affichage page principale
+        $today = new \DateTime('now');
         /** @var Participant $user */
         $user = $this->getUser();
         $filtre = (new SortieFiltre())
@@ -57,6 +59,7 @@ class SortieController extends AbstractController
         return $this->render('sortie/index.html.twig', [
             'form' => $formFiltre,
             'sorties' => $sorties,
+            'today' => $today,
         ]);
     }
 
@@ -90,7 +93,8 @@ class SortieController extends AbstractController
             return new JsonResponse(
                 [
                     'status' => 'error',
-                    'message' => 'Il n\'est plus possible de s\'inscrire pour cette sortie, soit parce que le nombre maximum de place est atteint, soit parce que la date limite d\'inscription est passée.',
+                    'message' => 'Il n\'est plus possible de s\'inscrire pour cette sortie, soit parce que le nombre
+                     maximum de place est atteint, soit parce que la date limite d\'inscription est passée.',
                 ],
                 Response::HTTP_OK,
                 [],
@@ -215,13 +219,10 @@ class SortieController extends AbstractController
      * @return Response
      */
     #[Route('/sortie/update/{id}', name: 'sortie_update', methods: ['GET', 'POST'])]
-    public function update(int $id, Request $request, ManagerRegistry $doctrine): Response
+    public function update(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        // Récupère l'orginisateur de la sortie
-        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
@@ -265,13 +266,10 @@ class SortieController extends AbstractController
      * @return Response
      */
     #[Route('sortie/cancel/{id}', name: 'sortie_cancel', methods: ['POST', 'GET'])]
-    public function cancel(int $id, Request $request, ManagerRegistry $doctrine): Response
+    public function cancel(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        // Récupère l'orginisateur de la sortie
-        $sortie = $doctrine->getRepository(Sortie::class)->findOneBy(['id' => $id]);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
@@ -283,7 +281,6 @@ class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
         }
 
-        $sortie = $doctrine->getRepository(Sortie::class)->find($id);
         $form = $this->createForm(SortieCancelType::class, $sortie);
         $form->handleRequest($request);
 

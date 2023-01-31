@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Accueil{% endblock %} | sortir.com</title>
@@ -16,7 +16,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 <header class="flex flex-row justify-between items-center">
-    <a href="#" class="text-3xl">sortir.com</a>
+    <a href="{{ path('sortie_index') }}" class="text-3xl">sortir.com</a>
 
     <nav class="flex flex-row justify-end gap-4">
         {% if is_granted('ROLE_USER') %}
@@ -45,7 +45,7 @@
     {% block body %}{% endblock %}
 </main>
 
-<footer>
+<footer class="flex  justify-center">
     <p>© Youpi Matin, 2022</p>
 </footer>
 </body>
