@@ -10,6 +10,7 @@ use App\Entity\Sortie;
 use App\Entity\Ville;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Faker\Core\DateTime;
 use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\String\Slugger\AsciiSlugger;
@@ -33,6 +34,7 @@ class AppFixtures extends Fixture
         $campus = [];
         $lieux = [];
         $participants = [];
+        $etatSortie = [];
 
         $states = ['Créée', 'Ouverte', 'Clôturée', 'Activité en cours', 'Passée', 'Annulée', 'Archivée'];
 
@@ -102,17 +104,42 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 50; $i++) {
             $sortie = new Sortie();
             $sortie->setNom($faker->sentence(3));
-            $futureDate = $faker->creditCardExpirationDate();
-            $sortie->setDateHeureDebut($futureDate);
-            $sortie->setDateLimiteInscription($futureDate->modify('-30 days'));
+
+            /*
+             * Gestion des dates debut et datelimite inscription
+             * La date de début est comprise en -30 et +30 jours par rapport à maintenant
+             * La date limite est 7 jours avant la date de début
+             */
+            $now = new \DateTime();
+            $dateDebut = $faker->dateTimeBetween('-60 days', '+60 days');
+            $sortie->setDateHeureDebut($dateDebut);
+            $dateLimiteInscriptionTimestamp = ($dateDebut->getTimestamp() - (7 * 24 * 3600)); // - 7 jours
+            $dateLimiteInscription = (new \DateTime())->setTimestamp($dateLimiteInscriptionTimestamp);
+            $sortie->setDateLimiteInscription($dateLimiteInscription);
             $sortie->setDuree(rand(20, 240));
-
             $places = rand(5, 40);
-
             $sortie->setNbInscriptionsMax($places);
             $sortie->setInfosSortie($faker->paragraphs(3, true));
-            $sortie->setEtat($etats[array_rand($etats)]);
             $sortie->setLieu($lieux[array_rand($lieux)]);
+
+            /*
+            * Gestion etat des sorties
+            */
+            // Si aujourd'hui < datelimiteCloture alors etat 'créée' , 'ouverte' ou 'Annulée'
+            if ($now < $dateLimiteInscription) {
+                $etatSortie[] = $etats[0]; // Créée
+                $etatSortie[] = $etats[1]; // Ouverte
+                $etatSortie[] = $etats[5]; // Annulée
+                $sortie->setEtat($etatSortie[array_rand($etatSortie)]);
+            }
+            // Si datelimiteCloture < aujourd'hui < dateDebut alors etat 'En cours'
+            if ($now < $dateDebut and $now > $dateLimiteInscription) {
+                $sortie->setEtat($etats[3]);
+            }
+            // Si aujourd'hui > dateDebut 'Passées'
+            if ($now > $dateDebut) {
+                $sortie->setEtat($etats[4]);
+            }
 
             /** @var Participant */
             $organisateur = $participants[array_rand($participants)];
@@ -121,6 +148,11 @@ class AppFixtures extends Fixture
 
             for ($j = 0; $j < $places; $j++) {
                 $sortie->addParticipant($participants[array_rand($participants)]);
+            }
+
+            // Si aujourd'hui > datecloture ou nombre max de participant atteind alors etat 'Cloturée'
+            if ($now > $dateLimiteInscription || count($sortie->getParticipants()) == $sortie->getNbInscriptionsMax()) {
+                $sortie->setEtat($etats[2]);
             }
 
             $manager->persist($sortie);
