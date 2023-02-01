@@ -183,7 +183,7 @@ class SortieController extends AbstractController
     public function publish(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('edit', $sortie);
+        $this->denyAccessUnlessGranted('edit_sortie', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
@@ -210,7 +210,7 @@ class SortieController extends AbstractController
     public function update(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si pas l'organisateur ou pas admin
-        $this->denyAccessUnlessGranted('edit', $sortie);
+        $this->denyAccessUnlessGranted('edit_sortie', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
@@ -289,7 +289,7 @@ class SortieController extends AbstractController
     public function delete(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si pas l'organisateur ou pas admin
-        $this->denyAccessUnlessGranted('edit', $sortie);
+        $this->denyAccessUnlessGranted('edit_sortie', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
