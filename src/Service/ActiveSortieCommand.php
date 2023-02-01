@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'app:active-sortie',
+    name: 'app:sortie:activer',
     description: 'Active les sorties dont la date et l\'heure sont actuelles.'
 )]
 class ActiveSortieCommand extends Command
