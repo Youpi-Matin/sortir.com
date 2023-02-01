@@ -7,6 +7,7 @@ window.onload = () => {
 
 function initListeLieux(e) {
     villeId = (e.target.options.selectedIndex);
+    console.log(villeId);
     fetch('http://localhost/api/lieu/ville/'.concat(villeId),
         {
             method: "GET",
@@ -14,7 +15,7 @@ function initListeLieux(e) {
         }).then(response => response.json())
         .then(data => {
             let options = "";
-
+            console.log(data);
             for (const lieu of data.lieux) {
                 options += `<option value="${lieu.id}">${lieu.nom}</option>`;
 
