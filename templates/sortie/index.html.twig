@@ -51,11 +51,21 @@
                 </td>
                 <td>
             <span id="sortie-actions-participant">
-              {% for statut in statuts %}
-                  <a href="{{ path('sortie_' ~ statut.action, { id: sortie.id }) }}"
-                     data-sortie-action="{{ statut.action }}"
-                     class="{{ statut.action == statuts[statutUser]['action'] ? '' : 'hidden' }}">{{ statut.label }}</a>
-              {% endfor %}
+                {% if is_granted('subscribe', sortie) %}
+                    <a href="{{ path('sortie_' ~ statuts[statutUser]['action'], { id: sortie.id }) }}"
+                       data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
+                {% endif %}
+                {% if is_granted('unsubscribe', sortie) %}
+                    <a href="{{ path('sortie_' ~ statuts[statutUser]['action'], { id: sortie.id }) }}"
+                       data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
+                {% endif %}
+                {#
+                {% for statut in statuts %}
+                    <a href="{{ path('sortie_' ~ statut.action, { id: sortie.id }) }}"
+                       data-sortie-action="{{ statut.action }}"
+                       class="{{ statut.action == statuts[statutUser]['action'] ? '' : 'hidden' }}">{{ statut.label }}</a>
+                {% endfor %}
+                #}
             </span>
 
                     <span id="sortie-actions-admin"></span>
@@ -64,10 +74,10 @@
                     {% if sortie.etat.libelle is same as "Activité en cours" %}
                         <a href="{{ path('sortie_view', {id: sortie.id}) }}">Afficher</a>
                     {% endif %}
-                    {% if is_granted('edit') %}
+                    {% if is_granted('edit_sortie', sortie) %}
                         <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Modifier</a>
 
-                        {% if is_granted('cancel') %}
+                        {% if is_granted('cancel_sortie', sortie) %}
                             <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Annuler</a>
                         {% endif %}
                         {% if sortie.etat.libelle is same as "Créée" %}

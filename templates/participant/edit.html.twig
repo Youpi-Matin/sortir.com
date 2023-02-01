@@ -8,7 +8,7 @@
 
 {% block body %}
 
-    {% if is_granted('edit') %}
+    {% if is_granted('edit', app.user) %}
         <h1>Mon profil</h1>
     {% else %}
         <h1>{{ app.user.pseudo }}</h1>

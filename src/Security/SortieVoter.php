@@ -7,16 +7,13 @@ use App\Entity\Sortie;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class AppVoter extends Voter
+class SortieVoter extends Voter
 {
-    public const VIEW = 'view';
-    public const EDIT = 'edit';
-    public const ADMIN = 'admin';
+    public const VIEW = 'view_sortie';
+    public const EDIT = 'edit_sortie';
     public const SUBSCRIBE = 'subscribe';
     public const UNSUBSCRIBE = 'unsubscribe';
-
-    public const CANCELSORTIE = 'cancel';
-
+    public const CANCELSORTIE = 'cancel_sortie';
 
     /**
      * @inheritDoc
@@ -24,7 +21,14 @@ class AppVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::ADMIN, self::SUBSCRIBE, self::UNSUBSCRIBE, self::CANCELSORTIE])) {
+        if (
+            !in_array($attribute, [
+                self::VIEW,
+                self::EDIT,
+                self::SUBSCRIBE,
+                self::UNSUBSCRIBE,
+                self::CANCELSORTIE])
+        ) {
             return false;
         }
 
@@ -43,60 +47,41 @@ class AppVoter extends Voter
             return false;
         }
 
+        /** @var Sortie $sortie */
+        $sortie = $subject;
+
         return match ($attribute) {
-            self::VIEW => $this->canView($subject, $user),
-            self::EDIT => $this->canEdit($subject, $user),
-            self::ADMIN => $this->isAdmin($user),
-            self::SUBSCRIBE => $this->canSubscribe($subject, $user),
-            self::UNSUBSCRIBE => $this->canUnsubscribe($subject, $user),
-            self::CANCELSORTIE => $this->canCancel($subject, $user),
+            self::VIEW => $this->canView($sortie, $user),
+            self::EDIT => $this->canEdit($sortie, $user),
+            self::SUBSCRIBE => $this->canSubscribe($sortie, $user),
+            self::UNSUBSCRIBE => $this->canUnsubscribe($sortie, $user),
+            self::CANCELSORTIE => $this->canCancel($sortie, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
 
     /** Check utilisateur connecté (autorisation par défaut)
-     * @param mixed $subject
+     * @param mixed $sortie
      * @param Participant $user
      * @return bool
      */
-    private function canView(mixed $subject, Participant $user): bool
+    private function canView(Sortie $sortie, Participant $user): bool
     {
         // Si on peut editer on peut voir
-        if ($this->canEdit($subject, $user)) {
+        if ($this->canEdit($sortie, $user)) {
             return true;
         }
         return true;
     }
 
     /** Check utilisateur autorisé à modifier les informations
-     * @param mixed $subject
+     * @param mixed $sortie
      * @param Participant $user
      * @return bool
      */
-    private function canEdit(mixed $subject, Participant $user): bool
+    private function canEdit(Sortie $sortie, Participant $user): bool
     {
-        if ($this->isAdmin($user)) {
-            return true;
-        }
-
-        if ($subject instanceof Sortie) {
-            return ($user === $subject->getOrganisateur()) || $user->isAdministrateur();
-        }
-
-        if ($subject instanceof Participant) {
-            return $user === $subject;
-        }
-
-        return false;
-    }
-
-    /** Check user isAdmin
-     * @param Participant $user
-     * @return bool|null
-     */
-    private function isAdmin(Participant $user)
-    {
-        return $user->isAdministrateur();
+        return ($user === $sortie->getOrganisateur() || $user->isAdministrateur());
     }
 
     /** Check si l'utilisateur peut s'inscrire à la sortie

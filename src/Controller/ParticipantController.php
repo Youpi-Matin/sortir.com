@@ -23,6 +23,7 @@ class ParticipantController extends AbstractController
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('edit', $participant);
 
+
         /** @var Participant $user */
         $user = $this->getUser();
 
@@ -70,7 +71,7 @@ class ParticipantController extends AbstractController
     public function view(Participant $participant): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('view');
+        $this->denyAccessUnlessGranted('view', $participant);
 
         return $this->render('participant/view.html.twig', [
             'participant' => $participant
