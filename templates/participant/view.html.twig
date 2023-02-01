@@ -2,40 +2,40 @@
 {% set title = "Mon profil" %}
 
 {% block title %}
-	{{title}}
+    {{ title }}
 {% endblock %}
 
 {% block body %}
+    <div class="bloc_form">
+        <h1>{{ participant.pseudo }}</h1>
 
-	<h1>{{participant.pseudo}}</h1>
+        <img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200">
 
-	<img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200">
+        <p>
+            <span>Prénom :</span>
+            <span>{{ participant.prenom }}</span>
+        </p>
 
-	<p>
-		<span>Prénom :</span>
-		<span>{{participant.prenom}}</span>
-	</p>
+        <p>
+            <span>Nom :</span>
+            <span>{{ participant.nom }}</span>
+        </p>
 
-	<p>
-		<span>Nom :</span>
-		<span>{{participant.nom}}</span>
-	</p>
+        <p>
+            <span>Téléphone :</span>
+            <span>{{ participant.telephone }}</span>
+        </p>
 
-	<p>
-		<span>Téléphone :</span>
-		<span>{{participant.telephone}}</span>
-	</p>
+        <p>
+            <span>Email :</span>
+            <span>{{ participant.mail }}</span>
+        </p>
 
-	<p>
-		<span>Email :</span>
-		<span>{{participant.mail}}</span>
-	</p>
+        <p>
+            <span>Campus :</span>
+            <span>{{ participant.campus }}</span>
+        </p>
 
-	<p>
-		<span>Campus :</span>
-		<span>{{participant.campus}}</span>
-	</p>
-
-	<a href="">Retour</a>
-
+        <a class="button" href="{{ path('sortie_index') }}">Retour</a>
+    </div>
 {% endblock %}

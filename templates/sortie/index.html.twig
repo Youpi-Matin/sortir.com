@@ -1,82 +1,85 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="flex flex-col items-end">
-        <div class="font-bold">
+
+    <div id="header_index_sortie">
+        <div id="index_sortie_today">
             Date du jour: <span>{{ today | date('d/m/Y') }}</span>
         </div>
 
-        <div class="font-bold">
+        <div id="index_sortie_username">
             Participant: <span>{{ app.user.pseudo }}</span>
         </div>
     </div>
-    <h1 class="font-bold">Filtrer les sorties</h1>
+
+    <h1>Filtrer les sorties</h1>
     {{ form_start(form) }}
     {{ form_widget(form) }}
 
-    <button type="submit">Rechercher</button>
+    <button class="button" type="submit">Rechercher</button>
     {{ form_end(form) }}
-
-    <table>
-        <thead>
-        <tr>
-            <th>Titre</th>
-            <th>Date</th>
-            <th>Clôture</th>
-            <th>Inscriptions</th>
-            <th>État</th>
-            <th>Inscrit</th>
-            <th>Organisateur</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% set statuts = { inscrit: { label: 'Se désister', action: 'desister' }, noninscrit: { label: "S'inscrire", action: 'inscrire' } } %}
-        {% for sortie in sorties %}
-            {% set statutUser = app.user in sortie.participants ? 'inscrit' : 'noninscrit' %}
-            <tr data-controller="sortie-des-inscription" data-sortie-action="{{ statuts[statutUser]['action'] }}">
-                <td>{{ sortie.nom }}</td>
-                <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
-                <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
-                <td>
-                    <span id="sortie-action-count">{{ sortie.participants|length }}</span>
-                    / {{ sortie.nbInscriptionsMax }}
-                </td>
-                <td>{{ sortie.etat.libelle }}</td>
-                <td>
-                    <span id="sortie-action-statut">{% if app.user in sortie.participants %}X{% endif %}</span>
-                </td>
-                <td>
-                    <a href="{{ path('participant_view', {id: sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a>
-                </td>
-                <td>
+    <div class="flex flex-col justify-content-center">
+        <table>
+            <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Date</th>
+                <th>Clôture</th>
+                <th>Inscriptions</th>
+                <th>État</th>
+                <th>Inscrit</th>
+                <th>Organisateur</th>
+                <th colspan="2">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set statuts = { inscrit: { label: 'Se désister', action: 'desister' }, noninscrit: { label: "S'inscrire", action: 'inscrire' } } %}
+            {% for sortie in sorties %}
+                {% set statutUser = app.user in sortie.participants ? 'inscrit' : 'noninscrit' %}
+                <tr data-controller="sortie-des-inscription" data-sortie-action="{{ statuts[statutUser]['action'] }}">
+                    <td>{{ sortie.nom }}</td>
+                    <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                    <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
+                    <td>
+                        <span id="sortie-action-count">{{ sortie.participants|length }}</span>
+                        / {{ sortie.nbInscriptionsMax }}
+                    </td>
+                    <td>{{ sortie.etat.libelle }}</td>
+                    <td>
+                        <span id="sortie-action-statut">{% if app.user in sortie.participants %}X{% endif %}</span>
+                    </td>
+                    <td>
+                        <a href="{{ path('participant_view', {id: sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a>
+                    </td>
+                    <td>
                     <span id="sortie-actions-participant">
                         {% if is_granted('subscribe', sortie) or is_granted('unsubscribe', sortie) %}
                             <a href="{{ path('sortie_' ~ statuts[statutUser]['action'], { id: sortie.id }) }}"
-                            data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
+                               data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
                         {% endif %}
                     </span>
-                </td>
-                <td>
-                    {% if sortie.etat.libelle is same as "Activité en cours" %}
-                        <a href="{{ path('sortie_view', {id: sortie.id}) }}">Afficher</a>
-                    {% endif %}
-                    {% if is_granted('edit_sortie', sortie) %}
-                        <a href="{{ path('sortie_update', {id: sortie.id}) }}">Modifier</a>
-
-                        {% if is_granted('cancel_sortie', sortie) %}
-                            <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Annuler</a>
+                    </td>
+                    <td>
+                        {% if sortie.etat.libelle is same as "Activité en cours" %}
+                            <a href="{{ path('sortie_view', {id: sortie.id}) }}">Afficher</a>
                         {% endif %}
-                        {% if sortie.etat.libelle is same as "Créée" %}
-                            <a href="{{ path('sortie_publish', {id: sortie.id}) }}">Publier</a>
+                        {% if is_granted('edit_sortie', sortie) %}
+                            <a href="{{ path('sortie_update', {id: sortie.id}) }}">Modifier</a>
+
+                            {% if is_granted('cancel_sortie', sortie) %}
+                                <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Annuler</a>
+                            {% endif %}
+                            {% if sortie.etat.libelle is same as "Créée" %}
+                                <a href="{{ path('sortie_publish', {id: sortie.id}) }}">Publier</a>
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
 
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a class="button" href="{{ path('sortie_create') }}">Créer une sortie</a>
+    </div>
 
-    <a href="{{ path('sortie_create') }}">Créer une sortie</a>
 {% endblock %}
