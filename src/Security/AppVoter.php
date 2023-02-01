@@ -15,6 +15,8 @@ class AppVoter extends Voter
     public const SUBSCRIBE = 'subscribe';
     public const UNSUBSCRIBE = 'unsubscribe';
 
+    public const CANCELSORTIE = 'cancel';
+
 
     /**
      * @inheritDoc
@@ -22,7 +24,7 @@ class AppVoter extends Voter
     protected function supports(string $attribute, mixed $subject): bool
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::VIEW, self::EDIT, self::ADMIN, self::SUBSCRIBE, self::UNSUBSCRIBE])) {
+        if (!in_array($attribute, [self::VIEW, self::EDIT, self::ADMIN, self::SUBSCRIBE, self::UNSUBSCRIBE, self::CANCELSORTIE])) {
             return false;
         }
 
@@ -47,6 +49,7 @@ class AppVoter extends Voter
             self::ADMIN => $this->isAdmin($user),
             self::SUBSCRIBE => $this->canSubscribe($subject, $user),
             self::UNSUBSCRIBE => $this->canUnsubscribe($subject, $user),
+            self::CANCELSORTIE => $this->canCancel($subject, $user),
             default => throw new \LogicException('This code should not be reached!')
         };
     }
@@ -130,6 +133,24 @@ class AppVoter extends Voter
             ($sortie->getEtat()->getLibelle() === 'Ouverte' || $sortie->getEtat()->getLibelle() === 'Clôturée')
             && $sortie->getDateHeureDebut() > new \DateTime('now')
             && $sortie->getParticipants()->contains($user)
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /** Peut Annuler une sortie
+     * Sortie clôturée et date de début non passée et est l'organisateur
+     * @param Sortie $sortie
+     * @param Participant $user
+     * @return bool
+     */
+    private function canCancel(Sortie $sortie, Participant $user): bool
+    {
+        if (
+            ($sortie->getEtat()->getLibelle() === 'Clôturée')
+            && $sortie->getDateHeureDebut() > new \DateTime('now')
+            && $this->canEdit($sortie, $user)
         ) {
             return true;
         }

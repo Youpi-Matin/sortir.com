@@ -258,17 +258,12 @@ class SortieController extends AbstractController
     #[Route('sortie/cancel/{id<\d+>}', name: 'sortie_cancel', methods: ['POST', 'GET'])]
     public function cancel(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
-        // Interdit l'acces si pas l'organisateur ou pas admin
-        $this->denyAccessUnlessGranted('edit', $sortie);
+        // Interdit l'acces si pas l'organisateur ou pas admin ou sortie en cours
+        $this->denyAccessUnlessGranted('cancel', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
             throw $this->createNotFoundException('La sortie n\'existe pas');
-        }
-
-        // Si l'utilisateur n'est pas l'organisateur -> Acccess Denied
-        if ($sortie->getOrganisateur() !== $this->getUser()) {
-            throw $this->createAccessDeniedException('Impossible d\'acceder à cette page !');
         }
 
         $form = $this->createForm(SortieCancelType::class, $sortie);
