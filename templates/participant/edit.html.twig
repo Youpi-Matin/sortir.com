@@ -8,18 +8,15 @@
 
 {% block body %}
 
-    {% if is_granted('ROLE_ADMIN') %}
-        <h1>{{ app.user.pseudo }}</h1>
-    {% else %}
+    {% if is_granted('edit', app.user) %}
         <h1>Mon profil</h1>
+    {% else %}
+        <h1>{{ app.user.pseudo }}</h1>
     {% endif %}
     {# <img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200"> #}
     {{ form_start(formulaireParticipant) }}
     {{ form_widget(formulaireParticipant) }}
     <input type="submit" value="Enregistrer"/>
     <a href="">Annuler</a>
-    {% if is_granted('ROLE_ADMIN') %}
-        <button href="">Désactiver le compte</button>
-    {% endif %}
     {{ form_end(formulaireParticipant) }}
 {% endblock %}
