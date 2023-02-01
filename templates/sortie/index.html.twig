@@ -50,25 +50,12 @@
                     <a href="{{ path('participant_view', {id: sortie.organisateur.id}) }}">{{ sortie.organisateur.pseudo }}</a>
                 </td>
                 <td>
-            <span id="sortie-actions-participant">
-                {% if is_granted('subscribe', sortie) %}
-                    <a href="{{ path('sortie_' ~ statuts[statutUser]['action'], { id: sortie.id }) }}"
-                       data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
-                {% endif %}
-                {% if is_granted('unsubscribe', sortie) %}
-                    <a href="{{ path('sortie_' ~ statuts[statutUser]['action'], { id: sortie.id }) }}"
-                       data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
-                {% endif %}
-                {#
-                {% for statut in statuts %}
-                    <a href="{{ path('sortie_' ~ statut.action, { id: sortie.id }) }}"
-                       data-sortie-action="{{ statut.action }}"
-                       class="{{ statut.action == statuts[statutUser]['action'] ? '' : 'hidden' }}">{{ statut.label }}</a>
-                {% endfor %}
-                #}
-            </span>
-
-                    <span id="sortie-actions-admin"></span>
+                    <span id="sortie-actions-participant">
+                        {% if is_granted('subscribe', sortie) or is_granted('unsubscribe', sortie) %}
+                            <a href="{{ path('sortie_' ~ statuts[statutUser]['action'], { id: sortie.id }) }}"
+                            data-sortie-action="{{ statuts[statutUser]['action'] }}">{{ statuts[statutUser]['label'] }}</a>
+                        {% endif %}
+                    </span>
                 </td>
                 <td>
                     {% if sortie.etat.libelle is same as "Activité en cours" %}

@@ -12,7 +12,6 @@ use App\Form\SortieCreationType;
 use App\Form\SortieFiltreType;
 use App\Repository\ParticipantRepository;
 use App\Repository\SortieRepository;
-use App\Service\SortieAvantInscription;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -75,34 +74,24 @@ class SortieController extends AbstractController
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('subscribe', $sortie);
 
-        if (SortieAvantInscription::dansLesTemps($sortie) && SortieAvantInscription::placesDisponibles($sortie)) {
-            /** @var Participant $user */
-            $user = $this->getUser();
-            $sortie->addParticipant($user);
-            $sortieRepository->save($sortie, true);
+        /** @var Participant $user */
+        $user = $this->getUser();
+        $sortie->addParticipant($user);
+        $sortieRepository->save($sortie, true);
 
-            return new JsonResponse(
-                [
-                    'status' => 'ok',
-                    'message' => 'Votre inscription a bien été prise en compte.',
-                    'count' => count($sortie->getParticipants()),
-                ],
-                Response::HTTP_OK,
-                [],
-                false
-            );
-        } else {
-            return new JsonResponse(
-                [
-                    'status' => 'error',
-                    'message' => 'Il n\'est plus possible de s\'inscrire pour cette sortie, soit parce que le nombre
-                     maximum de place est atteint, soit parce que la date limite d\'inscription est passée.',
-                ],
-                Response::HTTP_OK,
-                [],
-                false
-            );
-        }
+        $unsubscribe = $this->isGranted('unsubscribe', $sortie);
+
+        return new JsonResponse(
+            [
+                'status' => 'ok',
+                'message' => 'Votre inscription a bien été prise en compte.',
+                'count' => count($sortie->getParticipants()),
+                'action' => !$unsubscribe ?: 'desister',
+            ],
+            Response::HTTP_OK,
+            [],
+            false
+        );
     }
 
     #[Route(
@@ -122,11 +111,14 @@ class SortieController extends AbstractController
         $sortie->removeParticipant($user);
         $sortieRepository->save($sortie, true);
 
+        $subscribe = $this->isGranted('subscribe', $sortie);
+
         return new JsonResponse(
             [
                 'status' => 'ok',
                 'message' => 'Votre désistement a bien été pris en compte.',
                 'count' => count($sortie->getParticipants()),
+                'action' => !$subscribe ?: 'inscrire',
             ],
             Response::HTTP_OK,
             [],

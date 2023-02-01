@@ -6,13 +6,21 @@ export default class extends Controller {
     desister: 'X'
   }
 
+  labelsLiens = {
+    inscrire: 'S\'inscrire',
+    desister: 'Se désister',
+  }
+
   inverserAction = (string) => {
     return string === "inscrire" ? "desister" : "inscrire";
   }
 
-  toggleLiens = () => {
+  toggleLiens = (action) => {
     this.element.querySelectorAll("#sortie-actions-participant a").forEach((lien) => {
-      lien.classList.toggle("hidden");
+      // lien.classList.toggle("hidden");
+      lien.dataset.sortieAction = action;
+      lien.innerHTML = this.labelsLiens[action];
+      lien.href = lien.href.replace(this.inverserAction(action), action);
     });
   }
 
@@ -21,7 +29,6 @@ export default class extends Controller {
   }
 
   majInscrit = (action) => {
-    console.log(action);
     this.element.querySelector("#sortie-action-statut").innerHTML = this.labels[action];
   }
 
@@ -36,7 +43,8 @@ export default class extends Controller {
             this.element.dataset.sortieAction = this.inverserAction(action);
             this.majInscrit(this.inverserAction(action));
             this.majCompteur(data.count);
-            this.toggleLiens();
+            console.log(data.action);
+            this.toggleLiens(data.action);
           }
         })
       })
