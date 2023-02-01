@@ -22,10 +22,10 @@
         <table>
             <thead>
             <tr>
-                <th>Titre</th>
-                <th>Date</th>
+                <th>Nom de la sortie</th>
+                <th>Date de la sortie</th>
                 <th>Clôture</th>
-                <th>Inscriptions</th>
+                <th>inscrits/places</th>
                 <th>État</th>
                 <th>Inscrit</th>
                 <th>Organisateur</th>
@@ -38,14 +38,14 @@
                 {% set statutUser = app.user in sortie.participants ? 'inscrit' : 'noninscrit' %}
                 <tr data-controller="sortie-des-inscription" data-sortie-action="{{ statuts[statutUser]['action'] }}">
                     <td>{{ sortie.nom }}</td>
-                    <td>{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
-                    <td>{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
-                    <td>
+                    <td class="text-center">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
+                    <td class="text-center">{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
+                    <td class="text-center">
                         <span id="sortie-action-count">{{ sortie.participants|length }}</span>
                         / {{ sortie.nbInscriptionsMax }}
                     </td>
                     <td>{{ sortie.etat.libelle }}</td>
-                    <td>
+                    <td class="text-center">
                         <span id="sortie-action-statut">{% if app.user in sortie.participants %}X{% endif %}</span>
                     </td>
                     <td>

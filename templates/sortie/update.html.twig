@@ -1,17 +1,18 @@
 {% extends 'base.html.twig' %}
 
     {% block body %}
+        <div class="bloc_form">
+            {{ form_start(form) }}
 
-        {{ form_start(form) }}
-
-        {{ form_widget(form) }}
-
-        <button type="submit">Enregistrer</button>
-        <a href="{{ path('sortie_publish', {id: sortie_id}) }}">Publier la sortie</a>
-        <a href="{{ path('sortie_delete', {id: sortie_id}) }}">Supprimer la sortie</a>
-        <a href="{{ path('sortie_cancel', {id: sortie_id}) }}">Annuler</a>
-        {{ form_end(form) }}
-
+            {{ form_widget(form) }}
+            <div class="flex m-2">
+                <button class="button" type="submit">Enregistrer</button>
+                <a class="button" href="{{ path('sortie_publish', {id: sortie_id}) }}">Publier la sortie</a>
+                <a class="button" href="{{ path('sortie_delete', {id: sortie_id}) }}">Supprimer la sortie</a>
+                <a class="button" href="{{ path('sortie_cancel', {id: sortie_id}) }}">Annuler</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
     {% endblock %}
 
 
