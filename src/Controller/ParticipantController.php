@@ -37,22 +37,7 @@ class ParticipantController extends AbstractController
 
         $oldPassword = $user->getPassword();
 
-        /**
-         * SI l'utilisateur connecté est admlinistrateur, alors on affiche le choix du campus dans le formulaire
-         */
-        if ($user->isAdministrateur()) {
-            $formOptions = array(
-                'canEditCampus' => true,
-                'canEditPassword' => false,
-            );
-        } else {
-            $formOptions = array(
-                'canEditCampus' => false,
-                'canEditPassword' => true,
-            );
-        }
-
-        $formulaireParticipant = $this->createForm(ParticipantType::class, $participant, $formOptions);
+        $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
 
         $formulaireParticipant->handleRequest($request);
 
@@ -100,7 +85,7 @@ class ParticipantController extends AbstractController
     public function upload(Request $request, ParticipantUploadService $participantUploadService): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $formulaireUploadParticipants = $this->createForm(ParticipantUploadType::class);
 

@@ -75,7 +75,7 @@
                         <a href="{{ path('sortie_view', {id: sortie.id}) }}">Afficher</a>
                     {% endif %}
                     {% if is_granted('edit_sortie', sortie) %}
-                        <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Modifier</a>
+                        <a href="{{ path('sortie_update', {id: sortie.id}) }}">Modifier</a>
 
                         {% if is_granted('cancel_sortie', sortie) %}
                             <a href="{{ path('sortie_cancel', {id: sortie.id}) }}">Annuler</a>
