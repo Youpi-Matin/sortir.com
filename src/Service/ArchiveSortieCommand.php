@@ -8,7 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[AsCommand(name: 'app:archive-sortie', description: 'Archive les sortie passées depuis plus d\'un mois.')]
+#[AsCommand(name: 'app:sortie:archiver', description: 'Archive les sortie passées depuis plus d\'un mois.')]
 class ArchiveSortieCommand extends Command
 {
     protected static $defaultDescription = 'Archive les sortie passées depuis plus d\'un mois.';

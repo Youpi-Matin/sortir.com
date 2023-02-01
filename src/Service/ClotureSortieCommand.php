@@ -9,12 +9,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(
-    name: 'app:sortie:activer',
-    description: 'Active les sorties dont la date et l\'heure sont actuelles.'
+    name: 'app:sortie:cloturer',
+    description: 'Cloture les sortie dont la date limite d\'inscription est passée.'
 )]
-class ActiveSortieCommand extends Command
+class ClotureSortieCommand extends Command
 {
-    protected static $defaultDescription = 'Positionne les sorties Clôturées à \'Activité en cours\'.';
+    protected static $defaultDescription = 'Cloture les sortie dont la date limite d\'inscription est passée.';
 
     public function __construct(private SortieManager $manager)
     {
@@ -22,36 +22,36 @@ class ActiveSortieCommand extends Command
     }
 
 
-    /**Traitement de l'activation des sorties
+    /**Traitement de l'archivage des sorties
      * @throws ORMException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln([
-            'Activation des sorties',
+            'Cloture des sorties',
             '=====================',
             '',
         ]);
 
-        $sorties = $this->manager->findSortiesAActiver();
+        $sorties = $this->manager->findSortiesACloturer();
         if (count($sorties) > 0) {
             $output->writeln([
-                count($sorties) . ' sorties trouvées pour activation',
+                count($sorties) . ' sorties trouvées pour cloture',
             ]);
             foreach ($sorties as $sortie) {
                 $output->writeln([
                     '===================',
-                    'Activation de:',
+                    'Cloture de:',
                     'Id:' . $sortie->getId(),
                     'Nom: ' . $sortie->getNom(),
                     'Date: ' . date_format($sortie->getDateLimiteInscription(), 'Y-m-d'),
                     'Statut: ' . $sortie->getEtat()->getLibelle(),
                     '===================',
                 ]);
-                $this->manager->activeSortie($sortie);
+                $this->manager->clotureInscription($sortie);
             }
         } else {
-            $output->writeln('Aucune sortie trouvée pour activation');
+            $output->writeln('Aucune sortie trouvée pour archivage');
         }
         return Command::SUCCESS;
 
