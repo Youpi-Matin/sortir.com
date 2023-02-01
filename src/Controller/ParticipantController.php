@@ -93,7 +93,7 @@ class ParticipantController extends AbstractController
 
         if ($formulaireUploadParticipants->isSubmitted() && $formulaireUploadParticipants->isValid()) {
             // get file in filebag objects
-            $file = $request->files->get('participant_upload')['participantListeFile']['file'];
+            $file = $formulaireUploadParticipants->getData()['participantListeFile'];
 
             // Upload participant
             $participantUploadService->importParticipants($file);
