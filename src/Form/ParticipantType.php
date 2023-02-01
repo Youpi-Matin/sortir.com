@@ -22,52 +22,36 @@ class ParticipantType extends AbstractType
             ->add('prenom')
             ->add('nom')
             ->add('telephone')
-            ->add('mail', EmailType::class, ['label' => 'Email']);
-        if ($options['canEditPassword']) {
-            $builder
-                ->add('motPasse', RepeatedType::class, [
-                    'type' => PasswordType::class,
-                    'invalid_message' => 'Les mots de passe ne correspondent pas.',
-                    'first_options' => [
-                        'label' => 'Mot de passe',
-                        //'hash_property_path' => 'password',
-                        'always_empty' => 'false',
-                        'attr' => ['placeholder' => '•••••••'],
-                    ],
-                    'second_options' => [
-                        'label' => 'Confirmation',
-                        'attr' => ['placeholder' => '•••••••'],
-                    ],
-                    'getter' => function (Participant $participant, FormInterface $form): string {
-                        return $participant->getPassword();
-                    },
-                    'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
-                        $participant->setPassword((string)$password);
-                    },
-                    'required' => false,
-                ]);
-        }
-        if ($options['canEditCampus']) {
-            $builder
-                ->add('campus');
-        } else {
-            $builder
-                ->add('campus', TextType::class, [
-                    'disabled' => true,
-                    'label' => 'Campus'
-                ]);
-        }
-        $builder
+            ->add('mail', EmailType::class, ['label' => 'Email'])
+            ->add('motPasse', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => 'Les mots de passe ne correspondent pas.',
+                'first_options'  => [
+                    'label' => 'Mot de passe',
+                    //'hash_property_path' => 'password',
+                    'always_empty' => 'false',
+                    'attr' => ['placeholder' => '•••••••'],
+                ],
+                'second_options' => [
+                    'label' => 'Confirmation',
+                    'attr' => ['placeholder' => '•••••••'],
+                ],
+                'getter' => function (Participant $participant, FormInterface $form): string {
+                    return $participant->getPassword();
+                },
+                'setter' => function (Participant $participant, ?string $password, FormInterface $form): void {
+                    $participant->setPassword((string)$password);
+                },
+                'required' => false,
+            ])
+            ->add('campus')
             ->add('imageFile', VichImageType::class, [
                 'label' => 'Ma photo',
                 'required' => false,
                 'delete_label' => 'Supprimer',
                 'download_label' => 'Télécharger',
-                /*
-                'allow_delete' => true,
-
-                'asset_helper' => true, */
-            ]);
+                ])
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -75,8 +59,6 @@ class ParticipantType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Participant::class,
             'sanitize_html' => true,
-            'canEditCampus' => false,
-            'canEditPassword' => false,
         ]);
     }
 }

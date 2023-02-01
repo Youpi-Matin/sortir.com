@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Charger une liste de participants" %}
+
+{% block title %}
+	{{title}}
+{% endblock %}
+
+{% block body %}
+
+	<h1>{{title}}</h1>
+
+	{{ form_start(formulaireUploadParticipants) }}
+	{{ form_widget(formulaireUploadParticipants) }}
+	<input type="submit" value="Enregistrer"/>
+	<a href="">Annuler</a>
+	{{ form_end(formulaireUploadParticipants) }}
+{% endblock %}
