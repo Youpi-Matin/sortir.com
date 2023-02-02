@@ -15,10 +15,10 @@
     {% endblock %}
 </head>
 <body class="min-h-screen flex flex-col">
-<header class="flex flex-row justify-between items-center">
+<header>
     <a href="{{ path('sortie_index') }}" class="text-3xl">sortir.com</a>
 
-    <nav class="flex flex-row justify-end gap-4">
+    <nav>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="#">Villes</a>

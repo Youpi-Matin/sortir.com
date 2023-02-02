@@ -314,7 +314,7 @@ class SortieController extends AbstractController
     public function view(Sortie $sortie, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si non authentifié
-        $this->denyAccessUnlessGranted('view', $sortie);
+        $this->denyAccessUnlessGranted('view_sortie', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {

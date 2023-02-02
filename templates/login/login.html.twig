@@ -6,22 +6,27 @@
     {% if error %}
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
-
-    <form action="{{ path('login_login') }}" method="post">
-        <label for="username">Identifiant:</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}">
-
-        <label for="password">Mot de passe:</label>
-        <input type="password" id="password" name="_password">
-
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-        <label>
-            <input type="checkbox" name="_remember_me" checked/>
-            Se souvenir de moi
-        </label>
-
-        <button type="submit">login</button>
-        <a href="{{ path('app_forgot_password_request') }}">J'ai oublié mon mot de passe</a>
-    </form>
+    <div class="flex flex-col mx-auto w-fit min-vh-100">
+        <form class="login-form" action="{{ path('login_login') }}" method="post">
+            <div>
+                <label for="username">Identifiant:</label>
+                <input type="text" id="username" name="_username" value="{{ last_username }}">
+            </div>
+            <div>
+                <label for="password">Mot de passe:</label>
+                <input type="password" id="password" name="_password">
+            </div>
+            <div>
+                <button class="button" type="submit">login</button>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div id="remember_me">
+                    <label>
+                        <input type="checkbox" name="_remember_me" checked/>
+                        Se souvenir de moi
+                    </label>
+                    <a href="{{ path('app_forgot_password_request') }}">J'ai oublié mon mot de passe</a>
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}

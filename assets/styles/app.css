@@ -1,3 +1,98 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+
+:root header {
+    @apply flex flex-row justify-between items-center;
+}
+
+:root header > a {
+    @apply text-3xl
+}
+
+body {
+    @apply m-2;
+}
+
+nav {
+    @apply flex flex-1 justify-end gap-4 bg-amber-500 h-10 items-center text-amber-100 text-base p-2;
+}
+
+.button {
+    @apply p-1 m-1 border-2 border-amber-400 bg-amber-500 text-amber-50 font-bold w-1/4 text-center;
+}
+
+h1 {
+    @apply font-bold text-2xl;
+}
+
+table {
+    @apply table-auto border border-amber-700 m-2 font-light text-center;
+}
+
+thead {
+    @apply bg-amber-500 text-amber-100;
+}
+
+td {
+    @apply text-left m-1 border-l border-r border-amber-700;
+}
+
+form {
+    @apply flex flex-col items-start p-2 m-2;
+}
+
+input, label {
+    @apply m-1 p-1;
+}
+
+/*
+Messages
+ */
+.alert-success {
+    @apply flex bg-green-700 bg-opacity-70 text-green-200 font-semibold h-10 rounded  m-2 justify-center items-center;
+}
+
+/*
+Blocs de login
+ */
+.bloc_form {
+    @apply flex flex-col items-center mx-auto;
+}
+
+/*
+Page de login
+ */
+.login-form {
+    @apply flex flex-col w-fit mt-40;
+}
+
+.login-form div {
+    @apply flex justify-between m-2 items-center;
+}
+
+.login-form label {
+    @apply text-left;
+}
+
+#remember_me {
+    @apply flex flex-col p-2 m-2;
+}
+
+/*
+Index Sorties / page Accueil
+ */
+
+#header_index_sortie {
+    @apply flex flex-col items-end m-2;
+}
+
+#index_sortie_today {
+    @apply text-lg;
+}
+
+#index_sortie_username {
+    @apply font-medium;
+}
+
