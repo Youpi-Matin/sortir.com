@@ -146,10 +146,13 @@ class AppFixtures extends Fixture
             $sortie->setOrganisateur($organisateur);
             $sortie->setCampus($organisateur->getCampus());
 
-            for ($j = 0; $j < $places; $j++) {
-                $sortie->addParticipant($participants[array_rand($participants)]);
-            }
 
+            if ($sortie->getEtat() !== $etats[0]) {
+
+                for ($j = 0; $j < $places; $j++) {
+                    $sortie->addParticipant($participants[array_rand($participants)]);
+                }
+            }
             // Si aujourd'hui > datecloture ou nombre max de participant atteind alors etat 'Cloturée'
             if ($now > $dateLimiteInscription || count($sortie->getParticipants()) == $sortie->getNbInscriptionsMax()) {
                 $sortie->setEtat($etats[2]);
