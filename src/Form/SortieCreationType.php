@@ -88,8 +88,10 @@ class SortieCreationType extends AbstractType
             ->add('ajouter_lieu', ButtonType::class, [
                 'label' => 'Ajouter un lieu',
                 'attr' => [
-                    'class' => 'button',
+                    'class' => 'button js-modal',
                     'data-controller' => 'lieu-ajouter',
+                    'data-modal-content-id' => 'modalLieu',
+                    'data-modal-prefix-class' => 'simple simple-animated',
                 ]
             ])
         ;

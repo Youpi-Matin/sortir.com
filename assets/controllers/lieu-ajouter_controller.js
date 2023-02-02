@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import 'van11y-accessible-modal-window-aria';
 
 export default class extends Controller {
 
@@ -16,6 +17,7 @@ export default class extends Controller {
         }).then((response) => {
             response.json().then((data) => {
                 this.updateListeLieux(data);
+                document.querySelector('#js-modal-close').click();
             })
         })
     }
@@ -31,8 +33,6 @@ export default class extends Controller {
 
             this.submitModal(body);
         })
-
-        modal.classList.remove('hidden');
     }
 
     loadModal(selecteur, villeId) {
@@ -48,20 +48,10 @@ export default class extends Controller {
         })
     }
 
-    emptyModal(selecteur) {
-        let modal = document.querySelector(selecteur);
-        modal.classList.add('hidden');
-        modal.innerHTML = '';
-    }
-
     connect() {
-        let modalId = '#modalLieu';
+        let modalId = '#js-modal-content';
 
         let selectVille = document.querySelector('select#sortie_creation_ville');
-
-        selectVille.addEventListener('change', () => {
-            this.emptyModal(modalId)
-        });
 
         this.element.addEventListener('click', () => {
             this.loadModal(modalId, selectVille.value);

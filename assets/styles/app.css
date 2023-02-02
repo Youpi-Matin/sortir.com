@@ -2,12 +2,14 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@import "./modal.css";
+
 
 :root header {
     @apply flex flex-row justify-between items-center;
 }
 
-:root header > a {
+:root header>a {
     @apply text-3xl
 }
 
@@ -43,7 +45,8 @@ form {
     @apply flex flex-col items-start p-2 m-2;
 }
 
-input, label {
+input,
+label {
     @apply m-1 p-1;
 }
 
@@ -51,7 +54,7 @@ input, label {
 Messages
  */
 .alert-success {
-    @apply flex bg-green-700 bg-opacity-70 text-green-200 font-semibold h-10 rounded  m-2 justify-center items-center;
+    @apply flex bg-green-700 bg-opacity-70 text-green-200 font-semibold h-10 rounded m-2 justify-center items-center;
 }
 
 /*
@@ -95,4 +98,3 @@ Index Sorties / page Accueil
 #index_sortie_username {
     @apply font-medium;
 }
-
