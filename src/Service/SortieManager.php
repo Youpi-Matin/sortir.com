@@ -134,4 +134,42 @@ class SortieManager
             );
         }
     }
+
+    /** Recherche les sorties à terminer
+     * Les sorties encours et dont la date est hier
+     * @return array
+     */
+    public function findSortiesATerminer(): array
+    {
+        $oneDay = new \DateInterval('P1D');
+        $yesterday = (new \DateTime('now'))->sub($oneDay);
+        $qb = $this->sortieRepository->createQueryBuilder('s')
+            ->join('s.etat', 'e')
+            ->addSelect('e')
+            ->where('e.libelle = \'Activité en cours\'')
+            ->andWhere('s.dateLimiteInscription <= :delay')
+            ->setParameter('delay', $yesterday);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Active une sortie (Clôturée -> En cours)
+     * @param Sortie $sortie
+     * @return void
+     */
+    public function termineSortie(Sortie $sortie)
+    {
+        $sortie->setEtat($this->etatRepository->findOneBy(['libelle' => 'Passée']));
+        try {
+            $this->sortieRepository->save($sortie, true);
+        } catch (ORMException $e) {
+            throw new ORMException(
+                "Une erreur est survenue à la terminaison de la sortie: "
+                . $sortie->getId()
+                . " Message: "
+                . $e->getMessage()
+            );
+        }
+    }
 }
