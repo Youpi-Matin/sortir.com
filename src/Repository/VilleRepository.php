@@ -39,6 +39,16 @@ class VilleRepository extends ServiceEntityRepository
         }
     }
 
+    public function findLast(): Ville
+    {
+        return $this->createQueryBuilder('v')
+            ->orderBy('v.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleResult()
+        ;
+    }
+
 //    /**
 //     * @return Ville[] Returns an array of Ville objects
 //     */
