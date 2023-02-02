@@ -66,12 +66,49 @@ class AppFixtures extends Fixture
             $manager->persist($city);
         }
 
-        for ($i = 0; $i < 50; $i++) {
+        /*
+         * Creation de l'utilisateur admin
+         * login admin / Password dev
+         */
+        $participant = new Participant();
+        $participant->setActif(true);
+        $participant->setAdministrateur(true);
+        $participant->setNom($faker->lastName());
+        $prenom = $faker->firstName();
+        $participant->setPrenom($prenom);
+        $participant->setPseudo('admin');
+        $participant->setPassword($this->hasher->hashPassword($participant, 'dev'));
+        $participant->setMail($faker->email());
+        $participant->setTelephone($faker->phoneNumber());
+        $participant->setCampus($campus[array_rand($campus)]);
+        $participants[] = $participant;
+        $manager->persist($participant);
+
+        /*
+         * Creation de l'utilisateur user
+         * login user / Password dev
+         */
+        $participant = new Participant();
+        $participant->setActif(true);
+        $participant->setAdministrateur(false);
+        $participant->setNom($faker->lastName());
+        $prenom = $faker->firstName();
+        $participant->setPrenom($prenom);
+        $participant->setPseudo('user');
+        $participant->setPassword($this->hasher->hashPassword($participant, 'dev'));
+        $participant->setMail($faker->email());
+        $participant->setTelephone($faker->phoneNumber());
+        $participant->setCampus($campus[array_rand($campus)]);
+        $participants[] = $participant;
+        $manager->persist($participant);
+
+        /*
+         * Generation de 48 utilisateurs aleatoires
+         */
+        for ($i = 0; $i < 48; $i++) {
             $participant = new Participant();
             $participant->setActif(true);
-
-            $i === 0 ? $participant->setAdministrateur(true) : $participant->setAdministrateur(false);
-
+            $participant->setAdministrateur(false);
             $participant->setNom($faker->lastName());
             $prenom = $faker->firstName();
             $participant->setPrenom($prenom);
@@ -111,7 +148,7 @@ class AppFixtures extends Fixture
              * La date limite est 7 jours avant la date de début
              */
             $now = new \DateTime();
-            $dateDebut = $faker->dateTimeBetween('-60 days', '+60 days');
+            $dateDebut = $faker->dateTimeBetween('-60 days', '+90 days');
             $sortie->setDateHeureDebut($dateDebut);
             $dateLimiteInscriptionTimestamp = ($dateDebut->getTimestamp() - (7 * 24 * 3600)); // - 7 jours
             $dateLimiteInscription = (new \DateTime())->setTimestamp($dateLimiteInscriptionTimestamp);
@@ -148,7 +185,6 @@ class AppFixtures extends Fixture
 
 
             if ($sortie->getEtat() !== $etats[0]) {
-
                 for ($j = 0; $j < $places; $j++) {
                     $sortie->addParticipant($participants[array_rand($participants)]);
                 }
