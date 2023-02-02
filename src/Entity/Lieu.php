@@ -15,33 +15,28 @@ class Lieu
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['liste_lieux'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Type('string')]
     #[Assert\Length(min: 1, max: 255)]
     #[Assert\NotBlank]
-    #[Groups(['liste_lieux'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Type('string')]
     #[Assert\Length(min: 1, max: 255)]
     #[Assert\NotBlank]
-    #[Groups(['liste_lieux'])]
     private ?string $rue = null;
 
     #[ORM\Column]
     #[Assert\Range(min: -90, max: 90)]
     #[Assert\NotBlank]
-    #[Groups(['liste_lieux'])]
     private ?float $latitude = null;
 
     #[ORM\Column]
     #[Assert\Range(min: -180, max: 180)]
     #[Assert\NotBlank]
-    #[Groups(['liste_lieux'])]
     private ?float $longitude = null;
 
     #[ORM\ManyToOne(inversedBy: 'lieux')]

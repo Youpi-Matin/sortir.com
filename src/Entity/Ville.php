@@ -6,7 +6,6 @@ use App\Repository\VilleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: VilleRepository::class)]
@@ -15,25 +14,21 @@ class Ville
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['liste_lieux'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\Type('string')]
     #[Assert\Length(min: 1, max: 255)]
     #[Assert\NotBlank]
-    #[Groups(['liste_lieux'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 5)]
     #[Assert\Type('string')]
     #[Assert\Length(min: 1, max: 5)]
     #[Assert\NotBlank]
-    #[Groups(['liste_lieux'])]
     private ?string $codePostal = null;
 
-    #[ORM\OneToMany(mappedBy: 'ville', targetEntity: Lieu::class, orphanRemoval: true,)]
-    #[Groups(['liste_lieux'])]
+    #[ORM\OneToMany(mappedBy: 'ville', targetEntity: Lieu::class, orphanRemoval: true)]
     private Collection $lieux;
 
     public function __construct()

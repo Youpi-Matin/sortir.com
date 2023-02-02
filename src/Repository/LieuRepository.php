@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Lieu;
+use App\Entity\Ville;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,17 @@ class LieuRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function findLieuxForOneVille(Ville $ville): array
+    {
+        return $this->createQueryBuilder('l')
+            ->select(['l.id', 'l.nom'])
+            ->andWhere('l.ville = :ville')
+            ->setParameter('ville', $ville)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
 //    /**
