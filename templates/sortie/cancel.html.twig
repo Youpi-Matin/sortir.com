@@ -14,12 +14,12 @@
                     Lieu: {{ sortie.lieu.nom ~ ' ' ~ sortie.lieu.rue ~ ' ' ~ sortie.lieu.ville.codePostal ~ ' ' ~ sortie.lieu.ville.nom }}</div>
                 {{ form_start(form) }}
                 {{ form_widget(form) }}
+                <div id="boutons-annulation">
+                    <button class="button" type="submit">Enregistrer</button>
+                    <a class="button" href="{{ path('sortie_index') }}">Annuler</a>
+                </div>
                 {{ form_end(form) }}
-            </div>
-            <div id="boutons-annulation">
-                <button class="button" type="submit">Enregistrer</button>
-                <a class="button" href="{{ path('sortie_index') }}">Annuler</a>
-            </div>
+            </div
         </div>
     </div>
 {% endblock %}
