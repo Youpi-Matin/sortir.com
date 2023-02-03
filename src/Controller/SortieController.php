@@ -217,7 +217,7 @@ class SortieController extends AbstractController
             throw $this->createNotFoundException('La sortie n\'existe pas');
         }
 
-        $form = $this->createForm(SortieUpdateType::class, $sortie);
+        $form = $this->createForm(SortieCreationType::class, $sortie);
 
         $form->handleRequest($request);
 
@@ -251,7 +251,7 @@ class SortieController extends AbstractController
     public function cancel(Sortie $sortie, Request $request, ManagerRegistry $doctrine): Response
     {
         // Interdit l'acces si pas l'organisateur ou pas admin ou sortie en cours
-        $this->denyAccessUnlessGranted('cancel', $sortie);
+        $this->denyAccessUnlessGranted('edit_sortie', $sortie);
 
         // Si la sortie n'existe pas
         if (!$sortie) {
