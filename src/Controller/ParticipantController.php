@@ -15,6 +15,39 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ParticipantController extends AbstractController
 {
+    #[Route('/profil/add/', name: 'participant_add')]
+    public function add(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $hasher
+    ): Response 
+    {
+        // Interdit l'acces si non authentifié
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $participant = new Participant();
+
+        $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
+
+        $formulaireParticipant->handleRequest($request);
+
+        if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid()) {
+            $participant->setPassword($hasher->hashPassword($participant, $participant->getPassword()));
+
+            $entityManager->persist($participant);
+            $entityManager->flush();
+
+            $this->addFlash('success', "Profil ajouté !");
+
+            return $this->redirectToRoute('participant_edit', ['id'=>$participant->getId()]);
+        } 
+
+        return $this->render('participant/edit.html.twig', [
+            'formulaireParticipant' => $formulaireParticipant->createView(),
+            'participant' => $participant
+        ]);
+    }
+
     /**
      *
      * Edit Profil
@@ -26,23 +59,25 @@ class ParticipantController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $hasher
-    ): Response {
-
+    ): Response 
+    {
         // Interdit l'acces si non authentifié
         $this->denyAccessUnlessGranted('edit', $participant);
-
 
         /** @var Participant $user */
         $user = $this->getUser();
 
         $oldPassword = $user->getPassword();
+        $participant->setPassword('•••••••');
 
         $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
 
         $formulaireParticipant->handleRequest($request);
 
         if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid()) {
-            if (empty($participant->getPassword())) {
+
+            // test $participant->getPassword()
+            if (empty($participant->getPassword()) || $participant->getPassword() == '•••••••') {
                 $participant->setPassword($oldPassword);
             } else {
                 $participant->setPassword($hasher->hashPassword($participant, $participant->getPassword()));
@@ -81,7 +116,7 @@ class ParticipantController extends AbstractController
      * Upload
      *
      */
-    #[Route('/upload/', name: 'participant_upload')]
+    #[Route('/profil/upload/', name: 'participant_upload')]
     public function upload(Request $request, ParticipantUploadService $participantUploadService): Response
     {
         // Interdit l'acces si non authentifié
