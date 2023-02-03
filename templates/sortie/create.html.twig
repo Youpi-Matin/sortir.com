@@ -18,6 +18,7 @@
             <div id="form-sortie-col2">
                 {{ form_row(form.ville) }}
                 {{ form_row(form.lieu) }}
+                {{ form_row(form.ajouter_lieu) }}
             </div>
         </div>
         <div id="form-sortie-boutons">
@@ -30,5 +31,5 @@
     </div>
     {{ form_end(form) }}
 
-    <div id="modalLieu"></div>
+    <div id="modalLieu" class="hidden"></div>
 {% endblock %}
