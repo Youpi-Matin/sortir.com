@@ -10,7 +10,7 @@
 }
 
 
-:root header > a {
+:root header>a {
     @apply text-5xl;
 }
 
@@ -140,7 +140,7 @@ Creation sortie
 }
 
 #form-sortie-col1 {
-    @apply flex  flex-col;
+    @apply flex flex-col;
 }
 
 #form-sortie-col1 div {
@@ -151,6 +151,7 @@ Creation sortie
 #index_sortie_username {
     @apply font-medium;
 }
+
 #form-sortie-col1 * input {
     width: 100%;
 }
@@ -195,12 +196,14 @@ Vue Sortie
     @apply flex;
 }
 
-#view-sortie-col1, #view-sortie-col2 {
+#view-sortie-col1,
+#view-sortie-col2 {
     width: 50%;
     @apply flex flex-col m-4;
 }
 
-#view-sortie-col1 div, #view-sortie-col2 div {
+#view-sortie-col1 div,
+#view-sortie-col2 div {
     width: 100%;
     @apply flex m-2;
 }
@@ -250,7 +253,8 @@ annulation sortie
 /*
 Vue Profil
  */
-#participant div {
+#participant div,
+#participant_update div {
     @apply flex justify-between;
 }
 
@@ -261,4 +265,13 @@ Vue Profil
 #profil-bouton {
     width: 100%;
     @apply flex justify-around;
+}
+
+#photo-profil img {
+    object-fit: cover;
+    object-position: center;
+    height: 200px;
+    width: 200px;
+    border-radius: 100%;
+    margin-right: 50px;
 }

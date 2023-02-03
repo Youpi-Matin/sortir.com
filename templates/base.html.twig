@@ -17,12 +17,12 @@
 <body class="min-h-screen flex flex-col">
 <header>
     <a href="{{ path('sortie_index') }}" class="text-3xl">sortir.com</a>
-
+ 
     <nav>
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="#">Villes</a>
-                <a href="#">Campus</a>
+                <a href="{{ path('participant_add') }}">Ajouter un participant</a>
+                <a href="{{ path('participant_upload') }}">Téléverser des participants</a>
             {% endif %}
             <a href="{{ path('sortie_index') }}">Accueil</a>
             <a href="{{ path('participant_edit', {'id': app.user.id}) }}">Mon profil</a>

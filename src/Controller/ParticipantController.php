@@ -7,6 +7,7 @@ use App\Service\ParticipantUploadService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\ParticipantType;
 use App\Form\ParticipantUploadType;
+use App\Form\ParticipantUpdateType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +43,7 @@ class ParticipantController extends AbstractController
             return $this->redirectToRoute('participant_edit', ['id'=>$participant->getId()]);
         } 
 
-        return $this->render('participant/edit.html.twig', [
+        return $this->render('participant/create.html.twig', [
             'formulaireParticipant' => $formulaireParticipant->createView(),
             'participant' => $participant
         ]);
@@ -67,29 +68,18 @@ class ParticipantController extends AbstractController
         /** @var Participant $user */
         $user = $this->getUser();
 
-        $oldPassword = $user->getPassword();
-        $participant->setPassword('•••••••');
-
-        $formulaireParticipant = $this->createForm(ParticipantType::class, $participant);
+        $formulaireParticipant = $this->createForm(ParticipantUpdateType::class, $participant);
 
         $formulaireParticipant->handleRequest($request);
 
         if ($formulaireParticipant->isSubmitted() && $formulaireParticipant->isValid()) {
-
-            // test $participant->getPassword()
-            if (empty($participant->getPassword()) || $participant->getPassword() == '•••••••') {
-                $participant->setPassword($oldPassword);
-            } else {
-                $participant->setPassword($hasher->hashPassword($participant, $participant->getPassword()));
-            }
-
             $entityManager->persist($participant);
             $entityManager->flush();
 
             $this->addFlash('success', "Profil modifié !");
         }
 
-        return $this->render('participant/edit.html.twig', [
+        return $this->render('participant/update.html.twig', [
             'formulaireParticipant' => $formulaireParticipant->createView(),
             'participant' => $participant
         ]);

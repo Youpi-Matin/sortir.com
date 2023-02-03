@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% set title = "Mon profil" %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block body %}
+	<div class="bloc_form">
+		{% if is_granted('edit', app.user) %}
+			<h1>Mon profil</h1>
+		{% else %}
+			<h1>{{ app.user.pseudo }}</h1>
+		{% endif %}
+		{{ form_start(formulaireParticipant) }}
+		<div id="vue-profil">
+			<div id="photo-profil">
+				{{ form_row(formulaireParticipant.imageFile) }}
+			</div>
+			<div>
+				{{ form_widget(formulaireParticipant) }}
+
+				{{ form_end(formulaireParticipant) }}
+				<div id="profil-bouton" class="flex justify-between">
+					<input class="button" type="submit" value="Enregistrer"/>
+					<a class="button" href="{{ path('sortie_index') }}">Annuler</a>
+				</div>
+			</div>
+
+
+		</div>
+
+	</div>
+{% endblock %}
