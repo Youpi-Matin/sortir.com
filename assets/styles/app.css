@@ -2,10 +2,13 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@import "./modal.css";
+
 
 :root header {
     @apply flex flex-row justify-between items-center bg-amber-400 rounded-2xl m-0.5 p-1 text-amber-700;
 }
+
 
 :root header > a {
     @apply text-5xl;
@@ -44,7 +47,8 @@ form {
     @apply flex flex-col items-start p-2 m-2;
 }
 
-input, label {
+input,
+label {
     @apply m-1 p-1;
 }
 
@@ -143,6 +147,10 @@ Creation sortie
     @apply flex justify-between items-center m-1;
 }
 
+
+#index_sortie_username {
+    @apply font-medium;
+}
 #form-sortie-col1 * input {
     width: 100%;
 }

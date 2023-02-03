@@ -26,5 +26,8 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
+    },
+    "dependencies": {
+        "van11y-accessible-modal-window-aria": "^2.4.5"
     }
 }

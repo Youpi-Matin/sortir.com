@@ -8,6 +8,7 @@ use App\Entity\Sortie;
 use App\Entity\Ville;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -82,6 +83,17 @@ class SortieCreationType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => '...',
-            ]);
+                'empty_data' => '',
+            ])
+            ->add('ajouter_lieu', ButtonType::class, [
+                'label' => 'Ajouter un lieu',
+                'attr' => [
+                    'class' => 'button js-modal',
+                    'data-controller' => 'lieu-ajouter',
+                    'data-modal-content-id' => 'modalLieu',
+                    'data-modal-prefix-class' => 'simple simple-animated',
+                ]
+            ])
+        ;
     }
 }
