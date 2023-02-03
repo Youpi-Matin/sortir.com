@@ -5,10 +5,29 @@
 {% block body %}
 
     {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="button" id="create" name="action_button" value="create" type="submit">Enregistrer</button>
-    <button class="button" id="publish" name="action_button" value="publish" type="submit">Publier La Sortie</button>
-    <a class="button" href="{{ path('sortie_index') }}">Annuler</a>
+    <div id="form-sortie" class="flex flex-col">
+        <div class="flex justify-center">
+            <div id="form-sortie-col1">
+                {{ form_row(form.nom) }}
+                {{ form_row(form.dateHeureDebut) }}
+                {{ form_row(form.dateLimiteInscription) }}
+                {{ form_row(form.nbInscriptionsMax) }}
+                {{ form_row(form.duree) }}
+                {{ form_widget(form.infosSortie) }}
+            </div>
+            <div id="form-sortie-col2">
+                {{ form_row(form.ville) }}
+                {{ form_row(form.lieu) }}
+            </div>
+        </div>
+        <div id="form-sortie-boutons">
+            <button class="button" id="create" name="action_button" value="create" type="submit">Enregistrer</button>
+            <button class="button" id="publish" name="action_button" value="publish" type="submit">Publier La Sortie
+            </button>
+            <a class="button" href="{{ path('sortie_index') }}">Annuler</a>
+            {{ form_rest(form) }}
+        </div>
+    </div>
     {{ form_end(form) }}
 
     <div id="modalLieu"></div>

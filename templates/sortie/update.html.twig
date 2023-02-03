@@ -1,18 +1,31 @@
 {% extends 'base.html.twig' %}
 
     {% block body %}
-        <div class="bloc_form">
-            {{ form_start(form) }}
-
-            {{ form_widget(form) }}
-            <div class="flex m-2">
+        {{ form_start(form) }}
+        <div id="form-sortie" class="flex flex-col">
+            <div class="flex justify-center">
+                <div id="form-sortie-col1">
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.dateHeureDebut) }}
+                    {{ form_row(form.dateLimiteInscription) }}
+                    {{ form_row(form.nbInscriptionsMax) }}
+                    {{ form_row(form.duree) }}
+                    {{ form_widget(form.infosSortie) }}
+                </div>
+                <div id="form-sortie-col2">
+                    {{ form_row(form.ville) }}
+                    {{ form_row(form.lieu) }}
+                </div>
+            </div>
+            <div id="form-sortie-boutons">
                 <button class="button" type="submit">Enregistrer</button>
                 <a class="button" href="{{ path('sortie_publish', {id: sortie_id}) }}">Publier la sortie</a>
-                <a class="button" href="{{ path('sortie_delete', {id: sortie_id}) }}">Supprimer la sortie</a>
-                <a class="button" href="{{ path('sortie_cancel', {id: sortie_id}) }}">Annuler</a>
+                <a class="button" href="{{ path('sortie_cancel', {id: sortie_id}) }}">Annuler la sortie</a>
+                {{ form_rest(form) }}
             </div>
-            {{ form_end(form) }}
         </div>
+        {{ form_end(form) }}
+
     {% endblock %}
 
 

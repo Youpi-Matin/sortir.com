@@ -13,11 +13,23 @@
             {% else %}
                 <h1>{{ app.user.pseudo }}</h1>
             {% endif %}
-            {# <img src="{{ asset('images/participant/') }}{{ participant.imageName }}" alt="" height="200" width="200"> #}
             {{ form_start(formulaireParticipant) }}
-            {{ form_widget(formulaireParticipant) }}
-            <input class="button" type="submit" value="Enregistrer"/>
-            <a class="button" href="{{ path('sortie_index') }}">Annuler</a>
-            {{ form_end(formulaireParticipant) }}
+            <div id="vue-profil">
+                <div id="photo-profil">
+                    {{ form_row(formulaireParticipant.imageFile) }}
+                </div>
+                <div>
+                    {{ form_widget(formulaireParticipant) }}
+
+                    {{ form_end(formulaireParticipant) }}
+                    <div id="profil-bouton" class="flex justify-between">
+                        <input class="button" type="submit" value="Enregistrer"/>
+                        <a class="button" href="{{ path('sortie_index') }}">Annuler</a>
+                    </div>
+                </div>
+
+
+            </div>
+
         </div>
     {% endblock %}

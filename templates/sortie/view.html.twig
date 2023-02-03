@@ -1,32 +1,35 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="grid grid-cols-2 gap-1 mx-auto m-2">
-        <div class="col-span-2 text-center"><h1>Afficher une sortie</h1></div>
-        <div class="grid-rows-1">
-            <div>Nom de La sortie: {{ sortie.nom }}</div>
-            <div>Date et Heure de La sortie: {{ sortie.dateHeureDebut | date("d/m/y H:i") }}</div>
+    <div>
+        <div class="flex justify-center my-2"><h1>Afficher une sortie</h1></div>
+        <div id="view-sortie">
+            <div id="view-sortie-col1">
+                <div><span>Nom de La sortie: </span><span>{{ sortie.nom }}</span></div>
+                <div>
+                    <span>Date et Heure de La sortie: </span><span>{{ sortie.dateHeureDebut | date("d/m/y H:i") }}</span>
+                </div>
 
-            <div>Date Limite d'inscription: {{ sortie.dateLimiteInscription | date("d/m/y") }}</div>
-            <div>Nombre de places: {{ sortie.nbInscriptionsMax }}</div>
-            <div>Durée: {{ sortie.duree }} minutes</div>
-            <div>Descriptions et infos: <p class="border border-amber-500 p-1">{{ sortie.infosSortie }}</p></div>
-        </div>
-        <div class="grid-rows-1">
-            <div>Campus: {{ sortie.campus.nom }}</div>
-            <div>
-                Lieu: {{ sortie.lieu.nom }}</div>
-            <div>Rue: {{ sortie.lieu.rue }}</div>
-            <div>Code Postal: {{ sortie.lieu.ville.codePostal }}</div>
-            <div>Latitude: {{ sortie.lieu.latitude }}</div>
-            <div>Longitude: {{ sortie.lieu.longitude }}</div>
-
-            <div>
+                <div>
+                    <span>Date Limite d'inscription: </span><span>{{ sortie.dateLimiteInscription | date("d/m/y") }}</span>
+                </div>
+                <div><span>Nombre de places: </span><span>{{ sortie.nbInscriptionsMax }}</span></div>
+                <div><span>Durée: </span><span>{{ sortie.duree }} minutes</span></div>
+                <div>Descriptions et infos:</div>
+                <div>{{ sortie.infosSortie }}</div>
+            </div>
+            <div id="view-sortie-col2">
+                <div><span>Campus: </span><span>{{ sortie.campus.nom }}</span></div>
+                <div><span>Lieu: </span><span>{{ sortie.lieu.nom }}</span></div>
+                <div><span>Rue: </span><span>{{ sortie.lieu.rue }}</span></div>
+                <div><span>Code Postal: </span><span>{{ sortie.lieu.ville.codePostal }}</span></div>
+                <div><span>Latitude: </span><span>{{ sortie.lieu.latitude }}</span></div>
+                <div><span>Longitude: </span><span>{{ sortie.lieu.longitude }}</span></div>
             </div>
         </div>
-        <div class="flex flex-col">
+        <div id="participants-sortie">
             <h1>Liste des participants inscrits:</h1>
-            <table>
+            <table id="liste-participants">
                 <thead>
                 <tr>
                     <th>Pseudo</th>
