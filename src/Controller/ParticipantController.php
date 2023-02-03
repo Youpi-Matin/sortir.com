@@ -100,7 +100,7 @@ class ParticipantController extends AbstractController
      * Show Profil
      *
      */
-    #[Route('/profil/{id}', name: 'participant_view')]
+    #[Route('/profil/{id<\d+>}', name: 'participant_view')]
     public function view(Participant $participant): Response
     {
         // Interdit l'acces si non authentifié
