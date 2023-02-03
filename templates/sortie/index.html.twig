@@ -11,12 +11,27 @@
             Participant: <span>{{ app.user.pseudo }}</span>
         </div>
     </div>
-
     <h1>Filtrer les sorties</h1>
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
 
-    <button class="button" type="submit">Rechercher</button>
+    {{ form_start(form) }}
+    <div id="form-accueil" class="flex">
+        <div id="accueil-col1" class="flex flex-col">
+            {{ form_row(form.campus) }}
+            {{ form_row(form.search) }}
+            <div class="flex">
+                <span>Entre </span>
+                {{ form_row(form.dateMin) }}
+                <span> et </span>
+                {{ form_row(form.dateMax) }}
+            </div>
+        </div>
+        <div id="accueil-col2" class="flex flex-col justify-end">
+            {{ form_rest(form) }}
+        </div>
+        <div id="accueil-col3" class="flex my-6 mr-6">
+            <button class="button " type="submit">Rechercher</button>
+        </div>
+    </div>
     {{ form_end(form) }}
     <div class="flex flex-col justify-content-center">
         <table>
@@ -37,7 +52,7 @@
             {% for sortie in sorties %}
                 {% set statutUser = app.user in sortie.participants ? 'inscrit' : 'noninscrit' %}
                 <tr data-controller="sortie-des-inscription" data-sortie-action="{{ statuts[statutUser]['action'] }}">
-                    <td>{{ sortie.nom }}</td>
+                    <td><a href="{{ path('sortie_view', {id:sortie.id}) }}">{{ sortie.nom }}</a></td>
                     <td class="text-center">{{ sortie.dateHeureDebut|date('d/m/Y H:i') }}</td>
                     <td class="text-center">{{ sortie.dateLimiteInscription|date('d/m/Y') }}</td>
                     <td class="text-center">

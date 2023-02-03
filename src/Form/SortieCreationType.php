@@ -82,7 +82,6 @@ class SortieCreationType extends AbstractType
                 'class' => Lieu::class,
                 'choice_label' => 'nom',
                 'placeholder' => '...',
-                'empty_data' => '',
             ]);
     }
 }
